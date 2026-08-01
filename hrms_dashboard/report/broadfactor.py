@@ -53,15 +53,18 @@ class EmployeeBroadFactor(models.Model):
 
 
 class ReportOverdue(models.AbstractModel):
+    """Report parser for the Broad Factor qweb-pdf report."""
     _name = 'report.hrms_dashboard.report_broadfactor'
+    _description = 'Broad Factor Report'
 
     @api.model
-    def get_report_values(self, docids=None, data=None):
+    def _get_report_values(self, docids=None, data=None):
         sql = """select * from hr_employee_broad_factor"""
         self.env.cr.execute(sql)
         lines = self.env.cr.dictfetchall()
         return {
-            'doc_model': 'hr.employee.broad_factor',
+            'doc_ids': docids,
+            'doc_model': 'hr.employee.broad.factor',
             'lines': lines,
             'Date': fields.date.today(),
         }

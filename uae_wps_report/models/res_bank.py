@@ -41,11 +41,13 @@ class Bank(models.Model):
             vals['routing_code'] = vals['routing_code'].zfill(9)
         return super().write(vals)
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """
             Overrides the default create method to ensure that the routing code
             is properly formatted before creating the record.
         """
-        vals['routing_code'] = vals['routing_code'].zfill(9)
-        return super().create(vals)
+        for vals in vals_list:
+            if vals.get('routing_code'):
+                vals['routing_code'] = vals['routing_code'].zfill(9)
+        return super().create(vals_list)

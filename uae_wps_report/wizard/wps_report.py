@@ -165,7 +165,7 @@ class WpsReport(models.TransientModel):
                 ids = ids + ',' + str(slip.id)
             else:
                 ids = ids + str(slip.id)
-        language = self.env.context['lang']
+        language = self.env.context.get('lang', 'en_US')
         query = """select hr_employee.id,labour_card_number, salary_card_number,
             agent_id, hr_payslip_line.amount 
             from hr_employee join hr_payslip_line 

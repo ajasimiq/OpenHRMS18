@@ -34,21 +34,21 @@ class HrLawsuit(models.Model):
                                  default=lambda self: self.env.user.company_id,
                                  help='Company name of the user')
     requested_date = fields.Date(string='Date', copy=False,
-                                 default=fields.date.today(),
+                                 default=lambda self: fields.Date.today(),
                                  help='Start Date')
     hearing_date = fields.Date(string='Hearing Date',
                                help='Date of hearing')
     court_id = fields.Many2one('court.court', string='Court',
-                               track_visibility='always',
+                               tracking=True,
                                help='Name of the Court')
     judge_id = fields.Many2one('res.partner',
                                related="court_id.judge_id",
                                string='Judge',
-                               track_visibility='always',
+                               tracking=True,
                                domain="[('is_judge', '=', True)]",
                                help='Name of the Judge')
     lawyer_id = fields.Many2one('res.partner', string='Lawyer',
-                                track_visibility='always',
+                                tracking=True,
                                 help='Choose the Lawyer')
     party1_id = fields.Many2one('res.company', string='Party 1',
                                 required=1,
@@ -75,15 +75,16 @@ class HrLawsuit(models.Model):
                               ('cancel', 'Cancelled'),
                               ('fail', 'Failed'),
                               ('won', 'Won')], string='Status',
-                             default='draft', track_visibility='always',
+                             default='draft', tracking=True,
                              copy=False,
                              help='Status of the record')
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Inherited to create sequence"""
-        vals['name'] = self.env['ir.sequence'].next_by_code('hr.lawsuit')
-        return super().create(vals)
+        for vals in vals_list:
+            vals['name'] = self.env['ir.sequence'].next_by_code('hr.lawsuit')
+        return super().create(vals_list)
 
     def action_won(self):
         """Method for updating the state to won"""

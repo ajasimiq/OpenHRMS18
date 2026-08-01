@@ -29,5 +29,5 @@ class HrEmployee(models.Model):
     _inherit = 'hr.employee'
 
     resource_calendar_ids = fields.Many2one('resource.calendar',
-                                            string='Working Hours',
+                                            string='Scheduled Shift',
                                             help="Employee scheduled working hour")

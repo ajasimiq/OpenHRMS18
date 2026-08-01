@@ -36,7 +36,6 @@ class LeaveValidationStatus(models.Model):
                               help="Indicates the validators of leave",
                               domain="[('share','=',False)]")
     validation_status = fields.Boolean(string='Approve Status', readonly=True,
-                                       track_visibility='always',
                                        help="Status of leave approval")
     leave_comments = fields.Text(string='Comments',
                                  help="Comments regarding the request")

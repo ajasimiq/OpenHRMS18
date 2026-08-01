@@ -36,9 +36,10 @@ class ResBank(models.Model):
             vals['routing_code'] = vals['routing_code'].zfill(9)
         return super().write(vals)
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """To add routing code value while creating"""
-        if 'routing_code' in vals.keys():
-            vals['routing_code'] = vals['routing_code'].zfill(9)
-        return super().create(vals)
+        for vals in vals_list:
+            if vals.get('routing_code'):
+                vals['routing_code'] = vals['routing_code'].zfill(9)
+        return super().create(vals_list)

@@ -31,11 +31,12 @@ class DisciplinaryAction(models.Model):
     _description = "Disciplinary Action"
 
     # Assigning the sequence for the record
-    @api.model
-    def create(self, vals):
-        vals['name'] = self.env['ir.sequence'].next_by_code(
-            'disciplinary.action')
-        return super(DisciplinaryAction, self).create(vals)
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            vals['name'] = self.env['ir.sequence'].next_by_code(
+                'disciplinary.action')
+        return super().create(vals_list)
 
     state = fields.Selection([
         ('draft', 'Draft'),
@@ -43,7 +44,7 @@ class DisciplinaryAction(models.Model):
         ('submitted', 'Waiting Action'),
         ('action', 'Action Validated'),
         ('cancel', 'Cancelled'),
-    ], default='draft', track_visibility='onchange',
+    ], default='draft', tracking=True,
         help="Stage for disciplinary action")
     name = fields.Char(string='Reference', required=True, copy=False,
                        readonly=True,

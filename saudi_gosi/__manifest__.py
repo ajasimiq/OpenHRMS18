@@ -31,7 +31,7 @@
     'maintainer': 'Cybrosys Techno Solutions',
     'live_test_url': 'https://youtu.be/AedTkYdKu8s',
     'website': "https://www.openhrms.com",
-    'depends': ['hr', 'hr_payroll_community'],
+    'depends': ['mail', 'hr', 'hr_payroll_community'],
     'data': [
         'data/ir_sequence_data.xml',
         'data/saudi_gosi_data.xml',

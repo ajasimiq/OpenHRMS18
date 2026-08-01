@@ -25,6 +25,7 @@ from odoo import models, fields
 class ResCompanyPolicy(models.TransientModel):
     """Creates the model res.company.policy"""
     _name = 'res.company.policy'
+    _description = 'Company Policy'
 
     company_id = fields.Many2one('res.company', string="Company",
                                  help="Company of the policy")

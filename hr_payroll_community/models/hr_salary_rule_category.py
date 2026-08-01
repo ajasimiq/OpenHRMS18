@@ -45,7 +45,7 @@ class HrSalaryRuleCategory(models.Model):
                        help="Description for Salary Category")
     company_id = fields.Many2one(
         'res.company', string='Company', help="Choose Company",
-        default=lambda self: self.env['res.company']._company_default_get())
+        default=lambda self: self.env.company)
 
     @api.constrains('parent_id')
     def _check_parent_id(self):

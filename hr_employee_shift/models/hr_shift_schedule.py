@@ -21,6 +21,7 @@
 #
 #############################################################################
 from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError
 
 
 class HrShiftSchedule(models.Model):
@@ -55,23 +56,24 @@ class HrShiftSchedule(models.Model):
         shift schedules before updating a record.
         This method first checks for any overlapping shift schedules, If no
         overlaps are found, it proceeds to update the record using the parent class's `write` method."""
-        self._check_overlap(vals)
+        self._check_overlap([vals])
         return super(HrShiftSchedule, self).write(vals)
 
     @api.model_create_multi
-    def create(self, vals):
+    def create(self, vals_list):
         """The create method in the HrShift Schedule class overrides the parent
          class's create function to check for overlapping shift schedules before
           creating a new record."""
-        self._check_overlap(vals)
-        return super(HrShiftSchedule, self).create(vals)
+        self._check_overlap(vals_list)
+        return super(HrShiftSchedule, self).create(vals_list)
 
-    def _check_overlap(self, vals):
-        """The _check_ove rlap method checks for overlapping shift schedules and
+    def _check_overlap(self, vals_list):
+        """The _check_overlap method checks for overlapping shift schedules and
          validates that the start date is before the end date. If an overlap is
-         detected or the start date is after the end date, it raises a warning."""
-        print(vals)
-        for val in vals:
+         detected or the start date is after the end date, it raises a warning.
+         `vals_list` is always a list of value dictionaries: `create` passes its
+         own list and `write` wraps its single dict in one."""
+        for val in vals_list:
             if val.get('start_date', False) and val.get('end_date', False):
                 shifts = self.env['hr.shift.schedule'].search(
                     [('rel_hr_schedule', '=', val.get('rel_hr_schedule'))])
@@ -80,8 +82,9 @@ class HrShiftSchedule(models.Model):
                         if each.end_date >= val.get(
                                 'start_date') or each.start_date >= val.get(
                             'start_date'):
-                            raise Warning(
+                            raise ValidationError(
                                 _('The dates may not overlap with one another.'))
                 if val.get('start_date') > val.get('end_date'):
-                    raise Warning(_('Start date should be less than end date.'))
-            return True
+                    raise ValidationError(
+                        _('Start date should be less than end date.'))
+        return True

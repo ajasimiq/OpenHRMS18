@@ -61,9 +61,9 @@ class EmployeeVerification(models.Model):
     description_by_agency = fields.Char(string='Description', readonly=True,
                                         help="Description by agency")
     assigned_date = fields.Date(string="Assigned Date", readonly=True,
-                                default=date.today(),
+                                default=lambda self: date.today(),
                                 help="Record Assigned Date")
-    expected_date = fields.Date(state='Expected Date',
+    expected_date = fields.Date(string='Expected Date',
                                 help='Expected date of completion of '
                                      'background verification')
     state = fields.Selection([

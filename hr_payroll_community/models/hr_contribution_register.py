@@ -31,7 +31,7 @@ class HrContributionRegister(models.Model):
     company_id = fields.Many2one(
         comodel_name='res.company', string='Company',
         help="Choose Company for Register",
-        default=lambda self: self.env['res.company']._company_default_get())
+        default=lambda self: self.env.company)
     partner_id = fields.Many2one('res.partner', string='Partner',
                                  help="Choose Partner for Register")
     name = fields.Char(required=True, string="Name",

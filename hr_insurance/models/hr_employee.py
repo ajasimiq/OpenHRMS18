@@ -26,7 +26,7 @@ class HrEmployee(models.Model):
     """Inherited the model to add some fields"""
     _inherit = 'hr.employee'
 
-    insurance_percentage = fields.Float(string="Company Percentage ",
+    insurance_percentage = fields.Float(string="Company Percentage",
                                         help="Company insurance percentage")
     deduced_amount_per_month = fields.Float(string="Salary deduced per month",
                                             compute="_compute_deducted_amount",

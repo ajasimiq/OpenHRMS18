@@ -56,7 +56,7 @@ class AttendanceRegular(models.Model):
                                      ('approved', 'Approved')
                                      ], default='draft',
                                     copy=False,
-                                    track_visibility='onchange',
+                                    tracking=True,
                                     string='State', help='Status of record')
     def action_submit_reg(self):
         """Change state to 'requested' upon submission"""

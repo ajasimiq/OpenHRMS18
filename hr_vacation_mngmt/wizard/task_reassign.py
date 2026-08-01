@@ -56,7 +56,6 @@ class TaskReassign(models.TransientModel):
                 e_unavail = True
         emp_unavail = set(emp_unavail)
         emp_unavail_count = len(emp_unavail)
-        print(emp_unavail,emp_unavail_count,e_unavail)
         if e_unavail:
             if emp_unavail_count == 1:
                 raise UserError(_('Selected employee %s is not available') % (

@@ -50,15 +50,16 @@ class HrEmployee(models.Model):
                     16)
         return super().write(vals)
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """To add labour card no. and salary card no. while creating"""
-        if 'labour_card_number' in vals.keys():
-            if len(vals['labour_card_number']) < 14:
-                vals['labour_card_number'] = vals['labour_card_number'].zfill(
-                    14)
-        if 'salary_card_number' in vals.keys():
-            if len(vals['salary_card_number']) < 16:
-                vals['salary_card_number'] = vals['salary_card_number'].zfill(
-                    16)
-        return super().create(vals)
+        for vals in vals_list:
+            if 'labour_card_number' in vals.keys():
+                if len(vals['labour_card_number']) < 14:
+                    vals['labour_card_number'] = vals[
+                        'labour_card_number'].zfill(14)
+            if 'salary_card_number' in vals.keys():
+                if len(vals['salary_card_number']) < 16:
+                    vals['salary_card_number'] = vals[
+                        'salary_card_number'].zfill(16)
+        return super().create(vals_list)

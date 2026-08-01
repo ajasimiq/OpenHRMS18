@@ -73,13 +73,14 @@ class HrFlightTicket(models.Model):
                                  help="Company of the employee.",
                                  default=lambda self: self.env.user.company_id)
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Function declared for creating sequence Number for Flight Ticket"""
-        if vals.get('name', _('New')) == _('New'):
-            vals['name'] = self.env['ir.sequence'].next_by_code(
-                'hr.flight.ticket') or _('New')
-        res = super(HrFlightTicket, self).create(vals)
+        for vals in vals_list:
+            if vals.get('name', _('New')) == _('New'):
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'hr.flight.ticket') or _('New')
+        res = super().create(vals_list)
         return res
 
     @api.constrains('date_start', 'date_return')

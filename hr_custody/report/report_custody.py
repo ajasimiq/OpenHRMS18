@@ -48,7 +48,7 @@ class ReportCustody(models.Model):
     renew_date = fields.Date(string='Renewal Return Date',
                              help='The date when the custody is renewed and '
                                   'expected to be returned.')
-    is_renew_return_date = fields.Boolean(string='Renewal Return Date',
+    is_renew_return_date = fields.Boolean(string='Renewal Requested',
                                           help='Indicates whether there is a '
                                                'renewal return date or not.')
     state = fields.Selection(

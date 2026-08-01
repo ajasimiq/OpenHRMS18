@@ -42,11 +42,13 @@ class HrAppraisal(models.Model):
         rec = self.env['hr.appraisal.stages'].search([], limit=1,order='sequence ASC')
         return rec.id if rec else None
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """inherits the create method to update the stage to draft"""
-        vals['stage_id'] =  self.env['hr.appraisal.stages'].search([('sequence', '=', 0)]).id
-        return super(HrAppraisal, self).create(vals)
+        for vals in vals_list:
+            vals['stage_id'] = self.env['hr.appraisal.stages'].search(
+                [('sequence', '=', 0)]).id
+        return super(HrAppraisal, self).create(vals_list)
 
     employee_id = fields.Many2one('hr.employee', string="Employee",
                                   help="Employee name")
@@ -61,7 +63,7 @@ class HrAppraisal(models.Model):
     hr_manager = fields.Boolean(string="Manager", default=False,
                                 help="Whether the manager needs to "
                                      "attend survey")
-    hr_emp = fields.Boolean(string="Employee", default=False,
+    hr_emp = fields.Boolean(string="Include Employee", default=False,
                             help="Whether the employee needs to attend survey")
     hr_collaborator = fields.Boolean(string="Collaborators", default=False,
                                      help="To mention collaborators for"
@@ -96,13 +98,13 @@ class HrAppraisal(models.Model):
                                           help="Survey to send to the "
                                                "colleague")
     response_id = fields.Many2one('survey.user_input', string="Response",
-                                  ondelete="set null", oldname="response",
+                                  ondelete="set null",
                                   help="Response from the user input")
     final_evaluation = fields.Text(string="Final Evaluation",
                                    help="Final evaluation after the appraisal")
     app_period_from = fields.Datetime(string="From", required=True,
                                       readonly=True,
-                                      default=fields.Datetime.now(),
+                                      default=lambda self: fields.Datetime.now(),
                                       help="From Date")
     tot_comp_survey = fields.Integer(string="Count Answers",
                                      compute="_compute_completed_survey",
@@ -113,7 +115,7 @@ class HrAppraisal(models.Model):
                                  default=lambda self: self.env.uid,
                                  help="User created appraisal")
     stage_id = fields.Many2one('hr.appraisal.stages', string='Stage',
-                               track_visibility='onchange', index=True,
+                               tracking=True, index=True,
                                default=lambda self: self._default_stage_id(),
                                group_expand='_read_group_stage_ids',
                                help="Stage of the appraisal")
@@ -133,7 +135,7 @@ class HrAppraisal(models.Model):
     def _check_appraisal_deadline(self):
         """Method _check_appraisal_deadline to check whether the appraisal
         deadline given is in the past"""
-        if self.appraisal_deadline <= fields.date.today() or self.appraisal_deadline == fields.date.today:
+        if self.appraisal_deadline <= fields.date.today() or self.appraisal_deadline == fields.date.today():
             raise ValidationError(_("Appraisal deadline needs "
                                     "to be greater than today"))
 

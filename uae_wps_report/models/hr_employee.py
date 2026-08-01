@@ -45,12 +45,13 @@ class Employee(models.Model):
         self.formatting_card_numbers(vals)
         return super().write(vals)
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Override create method to ensure correct
         formatting of card numbers."""
-        self.formatting_card_numbers(vals)
-        return super().create(vals)
+        for vals in vals_list:
+            self.formatting_card_numbers(vals)
+        return super().create(vals_list)
 
     def formatting_card_numbers(self, vals):
         for field in ['labour_card_number', 'salary_card_number']:

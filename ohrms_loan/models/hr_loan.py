@@ -48,7 +48,7 @@ class HrLoan(models.Model):
 
     name = fields.Char(string="Loan Name", default="New", readonly=True,
                        help="Name of the loan")
-    date = fields.Date(string="Date", default=fields.Date.today(),
+    date = fields.Date(string="Date", default=lambda self: fields.Date.today(),
                        readonly=True, help="Date of the loan request")
     employee_id = fields.Many2one('hr.employee', string="Employee",
                                   required=True, help="Employee Name")
@@ -61,7 +61,7 @@ class HrLoan(models.Model):
     installment = fields.Integer(string="No Of Installments", default=1,
                                  help="Number of installments")
     payment_date = fields.Date(string="Payment Start Date", required=True,
-                               default=fields.Date.today(),
+                               default=lambda self: fields.Date.today(),
                                help="Date of the payment")
     loan_lines = fields.One2many('hr.loan.line', 'loan_id',
                                  string="Loan Line",
@@ -111,21 +111,24 @@ class HrLoan(models.Model):
             loan.balance_amount = balance_amount
             loan.total_paid_amount = total_paid
 
-    @api.model
-    def create(self, values):
+    @api.model_create_multi
+    def create(self, vals_list):
         """ Check whether any pending loan is for the employee and calculate
             the sequence
-            :param values : Dictionary which contain fields and values"""
-        loan_count = self.env['hr.loan'].search_count(
-            [('employee_id', '=', values['employee_id']),
-             ('state', '=', 'approve'),
-             ('balance_amount', '!=', 0)])
-        if loan_count:
-            raise ValidationError(
-                _("The Employee has already a pending installment"))
-        else:
-            values['name'] = self.env['ir.sequence'].get('hr.loan.seq') or ' '
-            return super(HrLoan, self).create(values)
+            :param vals_list : List of dictionaries which contain fields and
+            values"""
+        for values in vals_list:
+            loan_count = self.env['hr.loan'].search_count(
+                [('employee_id', '=', values['employee_id']),
+                 ('state', '=', 'approve'),
+                 ('balance_amount', '!=', 0)])
+            if loan_count:
+                raise ValidationError(
+                    _("The Employee has already a pending installment"))
+            else:
+                values['name'] = self.env['ir.sequence'].next_by_code(
+                    'hr.loan.seq') or ' '
+        return super().create(vals_list)
 
     def action_compute_installment(self):
         """This automatically create the installment the employee need to pay to

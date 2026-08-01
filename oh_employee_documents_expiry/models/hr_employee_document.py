@@ -37,7 +37,7 @@ class HrEmployeeDocument(models.Model):
                               help="Description of the documents.")
     expiry_date = fields.Date(string='Expiry Date', copy=False,
                               help="Expiry date of the documents.")
-    employee_ref_id = fields.Many2one('hr.employee', invisible=1,
+    employee_ref_id = fields.Many2one('hr.employee',
                                       copy=False,
                                       help='Specify the employee name.')
     doc_attachment_ids = fields.Many2many('ir.attachment',
@@ -46,7 +46,8 @@ class HrEmployeeDocument(models.Model):
                                           string="Attachment",
                                           help='You can attach the copy of your'
                                                ' document', copy=False)
-    issue_date = fields.Date(string='Issue Date', default=fields.datetime.now(),
+    issue_date = fields.Date(string='Issue Date',
+                             default=lambda self: fields.Date.today(),
                              help="Date of issued", copy=False)
     document_type_id = fields.Many2one('document.type',
                                        string="Document Type",

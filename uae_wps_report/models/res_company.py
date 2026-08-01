@@ -46,16 +46,16 @@ class Company(models.Model):
                 'employer_id'].zfill(13) if vals['employer_id'] else False
         return super().write(vals)
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """
             Overrides the default create method to ensure that the company
             registry and employer ID fields are properly formatted before
             creating the record.
         """
-        vals['company_registry'] = vals[
-            'company_registry'].zfill(13) if vals['company_registry'] else False
-        if 'employer_id' in vals:
-            vals['employer_id'] = vals[
-                'employer_id'].zfill(13) if vals['employer_id'] else False
-        return super().create(vals)
+        for vals in vals_list:
+            if vals.get('company_registry'):
+                vals['company_registry'] = vals['company_registry'].zfill(13)
+            if vals.get('employer_id'):
+                vals['employer_id'] = vals['employer_id'].zfill(13)
+        return super().create(vals_list)

@@ -77,7 +77,7 @@ class HrWps(models.TransientModel):
 
     def action_print_xlsx(self):
         """Used to print xlsx report"""
-        company = self.env['res.company']._company_default_get('wps.wizard')
+        company = self.env.company
         if not company.company_registry:
             raise UserError(_('Please Set Company Registry Number First'))
         users = self.env['hr.employee'].search([])
@@ -109,7 +109,7 @@ class HrWps(models.TransientModel):
         if not slips:
             raise UserError(_('There are no payslip Created for the selected '
                               'month'))
-        company = self.env['res.company']._company_default_get('wps.wizard')
+        company = self.env.company
         user = self.env['res.users'].browse(self.env.uid)
         if user.tz:
             t_z = pytz.timezone(user.tz) or pytz.utc

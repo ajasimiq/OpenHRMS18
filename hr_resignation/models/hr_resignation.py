@@ -51,11 +51,11 @@ class HrResignation(models.Model):
     resign_confirm_date = fields.Date(string="Confirmed Date",
                                       help='Date on which the request '
                                            'is confirmed by the employee.',
-                                      track_visibility="always")
+                                      tracking=True)
     approved_revealing_date = fields.Date(
         string="Approved Last Day Of Employee",
         help='Date on which the request is confirmed by the manager.',
-        track_visibility="always")
+        tracking=True)
     joined_date = fields.Date(string="Join Date",
                               help='Joining date of the employee.'
                                    'i.e Start date of the first contract')
@@ -71,7 +71,7 @@ class HrResignation(models.Model):
     state = fields.Selection(
         [('draft', 'Draft'), ('confirm', 'Confirm'), ('approved', 'Approved'),
          ('cancel', 'Rejected')],
-        string='Status', default='draft', track_visibility="always")
+        string='Status', default='draft', tracking=True)
     resignation_type = fields.Selection(selection=RESIGNATION_TYPE,
                                         help="Select the type of resignation: "
                                              "normal resignation or "
@@ -80,7 +80,7 @@ class HrResignation(models.Model):
                                      compute="_compute_change_employee",
                                      help="Checks , if the user has permission"
                                           " to change the employee")
-    employee_contract = fields.Char(String="Contract")
+    employee_contract = fields.Char(string="Contract")
 
     @api.depends('employee_id')
     def _compute_change_employee(self):
@@ -133,13 +133,14 @@ class HrResignation(models.Model):
                     self.employee_contract = contracts.name
                     self.notice_period = contracts.notice_days
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Override of the create method to assign a sequence for the record."""
-        if vals.get('name', _('New')) == _('New'):
-            vals['name'] = self.env['ir.sequence'].next_by_code(
-                'hr.resignation') or _('New')
-        return super(HrResignation, self).create(vals)
+        for vals in vals_list:
+            if vals.get('name', _('New')) == _('New'):
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'hr.resignation') or _('New')
+        return super(HrResignation, self).create(vals_list)
 
     def action_confirm_resignation(self):
         """ Method triggered by the 'Confirm' button to confirm the
@@ -203,35 +204,83 @@ class HrResignation(models.Model):
                     contract.state = 'cancel' if contract.state == "open" else \
                         contract.state
                 # Changing state of the employee if resigning today
-                if (resignation.expected_revealing_date <= fields.Date.today()
-                        and resignation.employee_id.active):
-                    resignation.employee_id.active = False
-                    # Changing fields in the employee table
-                    # with respect to resignation
-                    resignation.employee_id.resign_date = (
+                if resignation.expected_revealing_date <= fields.Date.today():
+                    resignation._process_employee_departure(
                         resignation.expected_revealing_date)
-                    if resignation.resignation_type == 'resigned':
-                        resignation.employee_id.resigned = True
-                        departure_reason_id = self.env[
-                            'hr.departure.reason'].search(
-                            [('name', '=', 'Resigned')])
-                    else:
-                        resignation.employee_id.fired = True
-                        departure_reason_id = self.env[
-                            'hr.departure.reason'].search(
-                            [('name', '=', 'Fired')])
-                    running_contract_ids = self.env['hr.contract'].search([
-                        ('employee_id', '=', resignation.employee_id.id),
-                        ('company_id', '=', resignation.employee_id.company_id.id),
-                        ('state', '=', 'open'),
-                    ]).filtered(lambda c: c.date_start <= fields.Date.today() and (
-                                not c.date_end or c.date_end >= fields.Date.today()))
-                    running_contract_ids.state = 'close'
-                    resignation.employee_id.departure_reason_id = departure_reason_id
-                    resignation.employee_id.departure_date = resignation.approved_revealing_date
-                    # Removing and deactivating user
-                    if resignation.employee_id.user_id:
-                        resignation.employee_id.user_id.active = False
-                        resignation.employee_id.user_id = None
             else:
                 raise ValidationError(_('Please Enter Valid Dates.'))
+
+    def _get_departure_reason(self):
+        """ Return the hr.departure.reason matching the resignation type.
+
+            Resolved through the standard external id first: 'name' is a
+            translated field, so matching on the English label alone fails on
+            a non-English database. Falls back to a name search for databases
+            where the reason records were re-created by hand."""
+        self.ensure_one()
+        if self.resignation_type == 'fired':
+            xml_id, label = 'hr.departure_fired', 'Fired'
+        else:
+            xml_id, label = 'hr.departure_resigned', 'Resigned'
+        reason = self.env.ref(xml_id, raise_if_not_found=False)
+        if not reason:
+            reason = self.env['hr.departure.reason'].search(
+                [('name', '=', label)], limit=1)
+        return reason
+
+    def _process_employee_departure(self, revealing_date):
+        """ Apply an approved resignation to the employee record.
+
+            Shared by the 'Approve' button and by the daily
+            'update_employee_status' cron so that both offboard an employee
+            in exactly the same way. Returns True when the employee was
+            archived, False when there was nothing left to do."""
+        self.ensure_one()
+        employee = self.employee_id
+        if not employee or not employee.active:
+            return False
+        today = fields.Date.today()
+        employee.active = False
+        # Changing fields in the employee table with respect to resignation
+        employee.resign_date = revealing_date
+        if self.resignation_type == 'fired':
+            employee.fired = True
+        else:
+            employee.resigned = True
+        running_contract_ids = self.env['hr.contract'].search([
+            ('employee_id', '=', employee.id),
+            ('company_id', '=', employee.company_id.id),
+            ('state', '=', 'open'),
+        ]).filtered(lambda c: c.date_start <= today and (
+                    not c.date_end or c.date_end >= today))
+        running_contract_ids.state = 'close'
+        employee.departure_reason_id = self._get_departure_reason()
+        employee.departure_date = self.approved_revealing_date or revealing_date
+        # Removing and deactivating user
+        if employee.user_id:
+            employee.user_id.active = False
+            employee.user_id = False
+        return True
+
+    @api.model
+    def update_employee_status(self):
+        """ Daily cron: offboard employees whose last working day has arrived.
+
+            Approving a resignation only archives the employee when the last
+            working day has already passed. Every other approved request is
+            picked up here once that day is reached, which is what the
+            'HR Resignation: Update Employee Status' cron defined in
+            data/ir_cron_data.xml calls. Returns the resignations processed."""
+        today = fields.Date.today()
+        processed = self.browse()
+        for resignation in self.search([('state', '=', 'approved')]):
+            employee = resignation.employee_id
+            if not employee or not employee.active:
+                continue
+            revealing_date = (resignation.approved_revealing_date or
+                              resignation.expected_revealing_date)
+            if not revealing_date or revealing_date > today:
+                continue
+            if resignation._process_employee_departure(revealing_date):
+                processed |= resignation
+        return processed

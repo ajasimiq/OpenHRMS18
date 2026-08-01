@@ -39,9 +39,9 @@ class HrAnnouncement(models.Model):
                    ('approved', 'Approved'), ('rejected', 'Refused'),
                    ('expired', 'Expired')],
         string='Status', default='draft', help="State of announcement.",
-        track_visibility='always')
+        tracking=True)
     requested_date = fields.Date(string='Requested Date',
-                                 default=fields.Datetime.now().
+                                 default=lambda self: fields.Datetime.now().
                                  strftime('%Y-%m-%d'),
                                  help="Create date of record")
     attachment_id = fields.Many2many(
@@ -79,9 +79,11 @@ class HrAnnouncement(models.Model):
                                          "who is authorized "
                                          "to view this announcements.")
     announcement = fields.Html(string='Letter', help="Announcement message")
-    date_start = fields.Date(string='Start Date', default=fields.Date.today(),
+    date_start = fields.Date(string='Start Date',
+                             default=lambda self: fields.Date.today(),
                              required=True, help="Start date of announcement")
-    date_end = fields.Date(string='End Date', default=fields.Date.today(),
+    date_end = fields.Date(string='End Date',
+                           default=lambda self: fields.Date.today(),
                            required=True, help="End date of announcement")
 
     @api.constrains('date_start', 'date_end')
@@ -91,17 +93,18 @@ class HrAnnouncement(models.Model):
             raise ValidationError(_("The Start Date must be earlier "
                                     "than the End Date"))
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """ Create method for HrAnnouncement model, adding sequence
         number to announcements. """
-        if vals.get('is_announcement'):
-            vals['name'] = self.env['ir.sequence'].next_by_code(
-                'hr.announcement.general')
-        else:
-            vals['name'] = self.env['ir.sequence'].next_by_code(
-                'hr.announcement')
-        return super(HrAnnouncement, self).create(vals)
+        for vals in vals_list:
+            if vals.get('is_announcement'):
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'hr.announcement.general')
+            else:
+                vals['name'] = self.env['ir.sequence'].next_by_code(
+                    'hr.announcement')
+        return super().create(vals_list)
 
     def action_reject_announcement(self):
         """ Refuse button action """

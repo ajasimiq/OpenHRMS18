@@ -40,6 +40,7 @@ class HrPayslipEmployees(models.TransientModel):
         payslips = self.env['hr.payslip']
         [data] = self.read()
         active_id = self.env.context.get('active_id')
+        run_data = {}
         if active_id:
             [run_data] = self.env['hr.payslip.run'].browse(active_id).read(
                 ['date_start', 'date_end', 'credit_note'])

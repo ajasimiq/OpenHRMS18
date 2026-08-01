@@ -146,9 +146,11 @@ class HrOvertime(models.Model):
                                      required=True,
                                      help="Type of duration for the overtime "
                                           "request")
-    cash_hrs_amount = fields.Float(string='Overtime Amount', readonly=True,
+    cash_hrs_amount = fields.Float(string='Overtime Amount (Hours)',
+                                   readonly=True,
                                    help="Amount for overtime based on hours")
-    cash_day_amount = fields.Float(string='Overtime Amount', readonly=True,
+    cash_day_amount = fields.Float(string='Overtime Amount (Days)',
+                                   readonly=True,
                                    help="Amount for overtime based on days")
     is_payslip_paid = fields.Boolean('Paid in Payslip', readonly=True,
                                      help="Indicates whether the overtime is paid "
@@ -285,12 +287,13 @@ class HrOvertime(models.Model):
                     'You can not have 2 Overtime requests that overlaps on '
                     'same day!'))
 
-    @api.model
-    def create(self, values):
-        """ Create a new overtime request with a unique sequence number"""
-        seq = self.env['ir.sequence'].next_by_code('hr.overtime') or '/'
-        values['name'] = seq
-        return super(HrOvertime, self.sudo()).create(values)
+    @api.model_create_multi
+    def create(self, vals_list):
+        """ Create new overtime requests with a unique sequence number"""
+        for values in vals_list:
+            seq = self.env['ir.sequence'].next_by_code('hr.overtime') or '/'
+            values['name'] = seq
+        return super(HrOvertime, self.sudo()).create(vals_list)
 
     def unlink(self):
         """Unlink the overtime request, preventing deletion if it's not in

@@ -32,7 +32,7 @@ class HrLeave(models.Model):
         'leave.validation.status',
         'leave_id',
         string='Leave Validators',
-        track_visibility='always',
+        tracking=True,
         help="Indicates the leave validators")
     multi_level_validation = fields.Boolean(
         string='Multiple Level Approval',

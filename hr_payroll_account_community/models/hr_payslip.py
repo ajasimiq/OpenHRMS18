@@ -46,14 +46,15 @@ class HrPayslip(models.Model):
                               help="Accounting entry associated with "
                                    "this record")
 
-    @api.model
-    def create(self, vals):
-        """Create a new payroll slip.This method is called when creating a
-            new payroll slip.It checks if 'journal_id' is present in the
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Create new payroll slips.This method is called when creating
+            new payroll slips.It checks if 'journal_id' is present in the
             context and, if so, sets the 'journal_id' field in the values."""
         if 'journal_id' in self.env.context:
-            vals['journal_id'] = self.env.context.get('journal_id')
-        return super(HrPayslip, self).create(vals)
+            for vals in vals_list:
+                vals['journal_id'] = self.env.context.get('journal_id')
+        return super(HrPayslip, self).create(vals_list)
 
     @api.onchange('contract_id')
     def onchange_contract_id(self):

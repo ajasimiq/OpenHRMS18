@@ -44,18 +44,6 @@
             </field>
         </record>
     <!--  Salary Structure search option -->
-        <record id="hr_payroll_structure_view_tree" model="ir.ui.view">
-            <field name="name">hr.payroll.structure.view.list</field>
-            <field name="model">hr.payroll.structure</field>
-            <field name="arch" type="xml">
-                <list string="Salary Structure">
-                    <field name="name"/>
-                    <field name="code"/>
-                    <field name="company_id" groups="base.group_multi_company"
-                           options="{'no_create': True}"/>
-                </list>
-            </field>
-        </record>
         <record id="hr_payroll_structure_search" model="ir.ui.view">
             <field name="name">hr.payroll.structure.select</field>
             <field name="model">hr.payroll.structure</field>

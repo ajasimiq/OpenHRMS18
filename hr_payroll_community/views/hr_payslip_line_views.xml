@@ -38,9 +38,9 @@
                         <field name="category_id"/>
                         <field name="amount_select"/>
                         <field name="amount_fix"
-                               readonly="amount_select,'!=','fix'"/>
+                               readonly="amount_select != 'fix'"/>
                         <field name="amount_percentage"
-                               readonly="amount_select,'!=','percentage'"/>
+                               readonly="amount_select != 'percentage'"/>
                         <field name="sequence"/>
                     </group>
                     <field name="note"/>

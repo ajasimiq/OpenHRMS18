@@ -46,7 +46,8 @@ class EmployeeTransfer(models.Model):
         help='Choose the employee you intend to transfer')
     old_employee_id = fields.Many2one(
         'hr.employee', string='Old Employee', help='Old employee details')
-    transfer_date = fields.Date(string='Date', default=fields.Date.today(),
+    transfer_date = fields.Date(string='Date',
+                                default=lambda self: fields.Date.today(),
                                 help="Transfer date")
     transfer_company_id = fields.Many2one(
         'res.company', string='Transfer To',
@@ -135,11 +136,12 @@ class EmployeeTransfer(models.Model):
         """Transfer cancel function."""
         self.state = 'cancel'
 
-    @api.model
-    def create(self, vals):
-        """Create a new employee transfer record.
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Create new employee transfer records.
         It customizes the 'name' field by prefixing it with "Transfer:
          " followed by the name of the employee being transferred."""
-        vals['name'] = "Transfer: " + self.env['hr.employee'].browse(
-            vals['employee_id']).name
-        return super(EmployeeTransfer, self).create(vals)
+        for vals in vals_list:
+            vals['name'] = "Transfer: " + self.env['hr.employee'].browse(
+                vals['employee_id']).name
+        return super().create(vals_list)

@@ -32,5 +32,5 @@ class HrContract(models.Model):
                                      'rel_hr_schedule', string="Shift Schedule",
                                      help="Scheduled shifts for an employee")
     working_hours = fields.Many2one('resource.calendar',
-                                    string='Working Schedule',
+                                    string='Shift Working Hours',
                                     help="Working hours included in a shift")

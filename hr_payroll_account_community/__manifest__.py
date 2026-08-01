@@ -24,12 +24,11 @@
     'name': 'Odoo18 Payroll Accounting',
     'version': '18.0.1.0.0',
     'category': 'Human Resources',
-    'summary': """Odoo 17 HR Payroll, payroll, Odoo17 Payroll, Odoo Payroll, 
-     Payroll, Odoo17 Payslips, Employee Payroll, HR Payroll,Odoo17, Odoo17 HR, 
-     odoo hr,odoo17, Accounting,Odoo Apps""",
-    'description': """ This module helps you to manage payroll and 
+    'summary': """Odoo 18 HR Payroll, payroll, Odoo18 Payroll, Odoo Payroll,
+     Payroll, Odoo18 Payslips, Employee Payroll, HR Payroll,Odoo18, Odoo18 HR,
+     odoo hr,odoo18, Accounting,Odoo Apps""",
+    'description': """ This module helps you to manage payroll and
      accounting.""",
-    'test': ['../account/test/account_minimal_test.xml'],
     'author': 'Cybrosys Techno Solutions',
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',

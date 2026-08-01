@@ -23,16 +23,16 @@ import time
 from datetime import datetime, timedelta
 from dateutil import relativedelta
 from odoo import fields, tools
-from odoo.modules.module import get_module_resource
+from odoo.tools.misc import file_path
 from odoo.tests import common
 
 
 class TestHrPayrollAccount(common.TransactionCase):
     def _load(self, module, *args):
         tools.convert_file(
-            self.cr, 'hr_payroll_account_community',
-            get_module_resource(module, *args), {}, 'init', False,
-            'test', self.registry._assertion_report)
+            self.env, 'hr_payroll_account_community',
+            file_path('/'.join((module,) + args)), {}, 'init', False,
+            'test')
 
     def setUp(self):
         super(TestHrPayrollAccount, self).setUp()
@@ -65,13 +65,13 @@ class TestHrPayrollAccount(common.TransactionCase):
             'rule_ids': [
                 (6, 0,
                  [self.ref(
-                     'hr_payroll_community.hr_salary_rule_houserentallowance1'),
+                     'hr_payroll_community.hr_salary_rule_house_rent_allowance1'),
                   self.ref(
-                     'hr_payroll_community.hr_salary_rule_convanceallowance1'),
+                     'hr_payroll_community.hr_salary_rule_convance_allowance1'),
                   self.ref(
-                     'hr_payroll_community.hr_salary_rule_professionaltax1'),
+                     'hr_payroll_community.hr_salary_rule_profession_altax1'),
                   self.ref(
-                      'hr_payroll_community.hr_salary_rule_providentfund1'),
+                      'hr_payroll_community.hr_salary_rule_provident_fund1'),
                   self.ref(
                       'hr_payroll_community.hr_salary_rule_meal_voucher'),
                   self.ref(

@@ -40,17 +40,17 @@ class HrEmployee(models.Model):
                                help="Employee joining date computed from the"
                                     " contract start date")
     id_expiry_date = fields.Date(help='Expiry date of Identification document',
-                                 string='Expiry Date',)
+                                 string='ID Expiry Date',)
     passport_expiry_date = fields.Date(help='Expiry date of Passport ID',
-                                       string='Expiry Date')
+                                       string='Passport Expiry Date')
     identification_attachment_ids = fields.Many2many(
         'ir.attachment', 'id_attachment_rel',
-        'id_ref', 'attach_ref', string="Attachment",
+        'id_ref', 'attach_ref', string="ID Attachment",
         help='Attach the copy of Identification document')
     passport_attachment_ids = fields.Many2many(
         'ir.attachment',
         'passport_attachment_rel',
-        'passport_ref', 'attach_ref1', string="Attachment",
+        'passport_ref', 'attach_ref1', string="Passport Attachment",
         help='Attach the copy of Passport')
     family_info_ids = fields.One2many('hr.employee.family', 'employee_id',
                                       string='Family',
@@ -84,18 +84,28 @@ class HrEmployee(models.Model):
         employee_ids = self.search(['|', ('id_expiry_date', '!=', False),
                                     ('passport_expiry_date', '!=', False)])
         for employee in employee_ids:
+            # The document number itself is optional, so it is only ever
+            # interpolated through %s: concatenating an empty Char (False)
+            # onto a str raises TypeError and aborts the cron for every
+            # employee still queued behind this one.
+            if not employee.work_email:
+                continue
             if employee.id_expiry_date:
                 exp_date = fields.Date.from_string(
                     employee.id_expiry_date) - timedelta(days=14)
                 if current_date >= exp_date:
-                    mail_content = ("Hello  " + employee.name + ",<br>Your ID "
-                                    + employee.identification_id +
-                                    " is going to expire on " +
-                                    str(employee.id_expiry_date)
-                                    + ". Please renew it before expiry date")
+                    mail_content = _(
+                        "Hello %(name)s,<br>Your ID %(number)s is going to "
+                        "expire on %(date)s. Please renew it before expiry "
+                        "date"
+                    ) % {
+                        'name': employee.name,
+                        'number': employee.identification_id or '',
+                        'date': employee.id_expiry_date,
+                    }
                     main_content = {
                         'subject': _('ID-%s Expired On %s') % (
-                            employee.identification_id,
+                            employee.identification_id or '',
                             employee.id_expiry_date),
                         'author_id': self.env.user.partner_id.id,
                         'body_html': mail_content,
@@ -106,14 +116,17 @@ class HrEmployee(models.Model):
                 exp_date = fields.Date.from_string(
                     employee.passport_expiry_date) - timedelta(days=180)
                 if current_date >= exp_date:
-                    mail_content = ("  Hello  " + employee.name +
-                                    ",<br>Your Passport " + employee.passport_id
-                                    +" is going to expire on " +
-                                    str(employee.passport_expiry_date) +
-                                    ". Please renew it before expire")
+                    mail_content = _(
+                        "Hello %(name)s,<br>Your Passport %(number)s is going "
+                        "to expire on %(date)s. Please renew it before expire"
+                    ) % {
+                        'name': employee.name,
+                        'number': employee.passport_id or '',
+                        'date': employee.passport_expiry_date,
+                    }
                     main_content = {
                         'subject': _('Passport-%s Expired On %s') % (
-                            employee.passport_id,
+                            employee.passport_id or '',
                             employee.passport_expiry_date),
                         'author_id': self.env.user.partner_id.id,
                         'body_html': mail_content,

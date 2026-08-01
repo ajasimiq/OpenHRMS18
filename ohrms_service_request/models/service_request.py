@@ -1,4 +1,4 @@
-123# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 ################################################################################
 #
 #    Cybrosys Technologies Pvt. Ltd.
@@ -84,7 +84,6 @@ class ServiceRequest(models.Model):
             val['name'] = self.env['ir.sequence'].next_by_code('service.request')
         return super(ServiceRequest, self).create(vals)
 
-    @api.depends('read_only')
     def _compute_read_only(self):
         """Compute method to determine if the user has project manager
         privileges."""

@@ -46,7 +46,7 @@ class HrPayrollStructure(models.Model):
     company_id = fields.Many2one(
         comodel_name='res.company', string='Company', required=True,
         help="Choose Company for Payroll Structure", copy=False,
-        default=lambda self: self.env['res.company']._company_default_get())
+        default=lambda self: self.env.company)
     note = fields.Text(string='Description',
                        help="Description for Payroll Structure")
     parent_id = fields.Many2one('hr.payroll.structure',
@@ -70,12 +70,13 @@ class HrPayrollStructure(models.Model):
             raise ValidationError(
                 _('You cannot create a recursive salary structure.'))
 
-    @api.returns('self', lambda value: value.id)
-    def copy(self, default=None):
-        """Function for return Payroll Structure"""
-        self.ensure_one()
-        default = dict(default or {}, code=_("%s (copy)") % (self.code))
-        return super(HrPayrollStructure, self).copy(default)
+    def copy_data(self, default=None):
+        """Suffix the reference of the copied Payroll Structure with
+        '(copy)'. Multi-record safe, as required by Odoo 18."""
+        vals_list = super().copy_data(default=default)
+        for structure, vals in zip(self, vals_list):
+            vals['code'] = _("%s (copy)", structure.code)
+        return vals_list
 
     def get_all_rules(self):
         """

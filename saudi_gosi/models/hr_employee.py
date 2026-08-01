@@ -20,7 +20,7 @@
 #
 #############################################################################
 from datetime import date
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class HREmployee(models.Model):
@@ -33,23 +33,24 @@ class HREmployee(models.Model):
     gosi_number = fields.Char(string='GOSI Number', help="Gosi Number")
     issue_date = fields.Date(string='Issued Date', help="Issued Date")
     age = fields.Char(string='Age', compute='_compute_age', help="Age")
-    limit = fields.Boolean(string='Eligible For GOSI', default=False,
-                           readonly=True, help='Whether the Employee is'
-                                               ' eligible for the GOSI')
+    limit = fields.Boolean(string='Eligible For GOSI', compute='_compute_limit',
+                           help='Whether the Employee is'
+                                ' eligible for the GOSI')
 
+    @api.depends('birthday')
     def _compute_age(self):
         """This function is used to compute the age of the employee according
-        to the given date of birth and also identify whether the employee is
-         eligible for the GOSI(The age of employee should be between 18 and
-         60)"""
+        to the given date of birth"""
         for res in self:
             if res.birthday:
-                age = ((date.today() - res.birthday) / 365).days
-                res.age = age
-                if int(res.age) <= 60 and int(res.age) >= 18:
-                    res.limit = True
-                else:
-                    res.limit = False
+                res.age = ((date.today() - res.birthday) / 365).days
             else:
                 res.age = 0
-                res.limit = False
+
+    @api.depends('age')
+    def _compute_limit(self):
+        """This function identifies whether the employee is eligible for the
+         GOSI(The age of employee should be between 18 and 60)"""
+        for res in self:
+            age = int(res.age) if res.age else 0
+            res.limit = 18 <= age <= 60

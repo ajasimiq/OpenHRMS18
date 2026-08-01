@@ -41,7 +41,8 @@ class HrInsurance(models.Model):
                                        string='Policy Coverage',
                                        help="Duration of the policy")
     date_from = fields.Date(string='Date From',
-                            default=fields.date.today(), readonly=True,
+                            default=lambda self: fields.Date.today(),
+                            readonly=True,
                             help="Start date")
     date_to = fields.Date(string='Date To', help="End date")
     state = fields.Selection([('active', 'Active'),

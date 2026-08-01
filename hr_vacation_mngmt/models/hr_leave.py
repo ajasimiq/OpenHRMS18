@@ -57,7 +57,7 @@ class HrLeave(models.Model):
                                     help='Details about leave salary of'
                                          ' employee.')
 
-    @api.depends('overlapping_leaves_ids', 'date_from', 'date_to')
+    @api.depends('date_from', 'date_to', 'department_id')
     def _compute_overlapping_leaves_ids(self):
         """Compute function over overlapping leaves"""
         for rec in self:
@@ -115,7 +115,6 @@ class HrLeave(models.Model):
                 holiday.action_validate()
 
     def action_book_ticket(self):
-        print(self.id,'self value')
         """Open the form view to book a flight ticket for the current
          leave request."""
         if not self.env.user.has_group('hr_holidays.group_hr_holidays_user'):

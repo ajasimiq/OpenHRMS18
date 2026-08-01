@@ -42,10 +42,11 @@ class HrPayslipInput(models.Model):
     date_from = fields.Date(string='Date From',
                             help="Starting Date for Payslip Lines",
                             required=True,
-                            default=datetime.now().strftime('%Y-%m-01'))
+                            default=lambda self: datetime.now().strftime(
+                                '%Y-%m-01'))
     date_to = fields.Date(string='Date To',
                           help="Ending Date for Payslip Lines", required=True,
-                          default=str(
+                          default=lambda self: str(
                               datetime.now() + relativedelta.relativedelta(
                                   months=+1, day=1, days=-1))[:10])
     amount = fields.Float(string="Amount",

@@ -46,7 +46,7 @@ class GosiPayslip(models.Model):
                       related='employee_id.birthday', help="Date Of Birth")
     gos_numb = fields.Char(string='GOSI Number', required=True,
                            related='employee_id.gosi_number',
-                           track_visibility='onchange', help="Gosi number")
+                           tracking=True, help="Gosi number")
     issued_dat = fields.Date(string='Issued Date', required=True,
                              related='employee_id.issue_date',
                              help="Issued date")
@@ -54,8 +54,9 @@ class GosiPayslip(models.Model):
                        help="Name",
                        readonly=True, default=lambda self: _('New'))
 
-    @api.model
-    def create(self, vals):
+    @api.model_create_multi
+    def create(self, vals_list):
         """Generate sequence number"""
-        vals['name'] = self.env['ir.sequence'].next_by_code('gosi.payslip')
-        return super(GosiPayslip, self).create(vals)
+        for vals in vals_list:
+            vals['name'] = self.env['ir.sequence'].next_by_code('gosi.payslip')
+        return super().create(vals_list)
