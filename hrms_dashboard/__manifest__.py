@@ -46,10 +46,16 @@
     ],
     'assets': {
         'web.assets_backend': [
+            # Vendored Chart.js 2.9.4 (MIT), loaded before dashboard.js.
+            # It was previously pulled from cdnjs at runtime, which fails
+            # under a strict CSP or on a host without outbound internet, and
+            # left the dashboard at the mercy of a third party. Pinned to 2.x
+            # deliberately: dashboard.js uses the v2 API (top-level
+            # options.legend), which v3+ moved under options.plugins.
+            'hrms_dashboard/static/lib/chartjs/chart.min.js',
             'hrms_dashboard/static/src/css/dashboard.css',
             'hrms_dashboard/static/src/js/dashboard.js',
             'hrms_dashboard/static/src/xml/dashboard.xml',
-            'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js',
         ],
     },
     'images': ["static/description/banner.jpg"],
