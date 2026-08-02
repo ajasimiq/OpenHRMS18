@@ -27,15 +27,22 @@ class TestHrResignation(TransactionCase):
             'company_id': self.company.id,
         }, **values))
 
-    def _make_contract(self, employee, state='open'):
-        return self.env['hr.contract'].create({
-            'name': 'Contract %s' % employee.name,
-            'employee_id': employee.id,
-            'company_id': self.company.id,
+    def _make_contract(self, employee):
+        """Configure the employee's running contract.
+
+        Odoo 19 removed hr.contract: contract data now lives on hr.version,
+        one of which every employee already owns, and there is no state
+        machine. So rather than creating a record we configure the version the
+        employee was born with. contract_date_end is left open on purpose --
+        that is what marks the contract as still running.
+        """
+        version = employee.version_id
+        version.sudo().write({
+            'contract_date_start': self.today - timedelta(days=365),
+            'contract_date_end': False,
             'wage': 1000.0,
-            'date_start': self.today - timedelta(days=365),
-            'state': state,
         })
+        return version
 
     def _make_resignation(self, employee, revealing_date=None, **values):
         """Create a draft resignation.
@@ -183,15 +190,19 @@ class TestHrResignation(TransactionCase):
         self.assertTrue(employee.fired)
         self.assertFalse(employee.resigned)
 
-    def test_cron_closes_running_contract(self):
+    def test_cron_ends_the_running_contract(self):
+        """Odoo 19 has no contract state, so ending employment is recorded by
+        stamping the running version's contract end date."""
         employee = self._make_employee('Leaver With Contract')
-        contract = self._make_contract(employee)
+        version = self._make_contract(employee)
         resignation = self._make_resignation(employee, self.today)
         self._approve(resignation)
 
         self.env['hr.resignation'].update_employee_status()
 
-        self.assertEqual(contract.state, 'close')
+        self.assertEqual(version.sudo().contract_date_end, self.today,
+                         "the running contract should be closed off on the "
+                         "employee's last working day")
 
     def test_cron_deactivates_the_linked_user(self):
         user = self.env['res.users'].create({

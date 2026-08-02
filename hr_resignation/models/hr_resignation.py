@@ -260,10 +260,16 @@ class HrResignation(models.Model):
         # today, and ending employment means stamping its contract end date.
         # contract_date_end is the stored, writable field (date_end is
         # computed) and is restricted to HR managers, hence the sudo.
+        # contract_date_start must be set: Odoo 19 enforces
+        # hr_version_check_contract_start_date_defined, so stamping an end date
+        # on a version that never had a start raises. Such a version is not a
+        # running contract anyway -- every employee owns one from creation.
         running_versions = self.env['hr.version'].sudo().search([
             ('employee_id', '=', employee.id),
-            '|', ('date_start', '=', False), ('date_start', '<=', today),
-            '|', ('date_end', '=', False), ('date_end', '>=', today),
+            ('contract_date_start', '!=', False),
+            ('contract_date_start', '<=', today),
+            '|', ('contract_date_end', '=', False),
+            ('contract_date_end', '>=', today),
         ])
         for version in running_versions:
             if not version.contract_date_end:
