@@ -2,9 +2,7 @@
 <odoo>
     <!--Added checkbox for approval from account manager -->
     <record id="res_config_settings_view_form" model="ir.ui.view">
-        <field name="name">
-            res.config.settings.inherits.ohrms.loan.accounting
-        </field>
+        <field name="name">res.config.settings.inherits.ohrms.loan.accounting</field>
         <field name="model">res.config.settings</field>
         <field name="inherit_id"
                ref="account.res_config_settings_view_form"/>

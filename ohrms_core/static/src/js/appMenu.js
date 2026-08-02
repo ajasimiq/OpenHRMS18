@@ -24,6 +24,22 @@ patch(NavBar.prototype, {
             results : [],
         })
     },
+
+        _onMenuClick(ev) {
+        ev.preventDefault();
+        const liEl = ev.currentTarget.closest("li");
+        const menuEl = liEl.querySelector(".dropdown-menu");
+        menuEl.classList.toggle("show");
+    },
+
+    _closeFullMenu(ev) {
+    //while click on the  app icon  this function will close the
+    const dropdownMenu = ev.currentTarget.closest(".dropdown-menu");
+    if (dropdownMenu) {
+        dropdownMenu.classList.remove("show");
+    }
+    },
+
      _searchMenusSchedule() {
         $('.search-results').removeClass("o_hidden");
         $('.app-menu').addClass("o_hidden");

@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2026-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -22,11 +22,11 @@
 #############################################################################
 {
     'name': 'Open HRMS Core',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'category': 'Generic Modules/Human Resources',
-    'summary': """Open HRMS Odoo18, HRMS odoo18, Odoo HR, HR Dashboard, 
-     Odoo18 Payroll, HR Management, Odoo Branch, Odoo Loan, Salary Advance, 
-     Odoo18,Payroll,Dashboard,Accounting,HR Kit,HR,Odoo Apps, Odoo18""",
+    'summary': """Open HRMS Odoo19, HRMS odoo19, Odoo HR, HR Dashboard, 
+     Odoo19 Payroll, HR Management, Odoo Branch, Odoo Loan, Salary Advance, 
+     Odoo19,Payroll,Dashboard,Accounting,HR Kit,HR,Odoo Apps, Odoo19""",
     'description': """Openhrms, Main module of Open HRMS,Payroll, Payroll 
      Accounting, Expense, Dashboard,Employees, Employee Document, Resignation, 
      Salary Advance, Loan Management, Gratuity, Service Request, Gosi, 
@@ -36,7 +36,7 @@
      Asset Custody, Employee Checklist, Entry and Exit Checklist, Disciplinary 
      Actions, openhrms, Open HRMS, hrms, Attrition Rate, Document Expiry, 
      Visa Expiry, Law Suit Management, Employee, Employee Training, payroll, 
-     odoo18 payroll""",
+     odoo19 payroll""",
     'author': 'Cybrosys Techno solutions',
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
@@ -64,18 +64,23 @@
         'hr_reminder'
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/menu_arrangement_view.xml',
         'views/hr_config_view.xml',
         'views/ir_ui_menu_views.xml',
-        'views/hr_employee_views.xml'
+        'views/hr_employee_views.xml',
+        'wizard/ohrms_core_support_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
             'ohrms_core/static/src/css/menu_order_alphabets.css',
+            'ohrms_core/static/src/css/ohrms_core_support.css',
             'web/static/lib/jquery/jquery.js',
             'ohrms_core/static/src/js/appMenu.js',
+            'ohrms_core/static/src/js/ohrms_core_systray.js',
             'ohrms_core/static/src/xml/link_view.xml',
-            'ohrms_core/static/templates/side_bar.xml'
+            'ohrms_core/static/src/xml/ohrms_core_systray.xml',
+            'ohrms_core/static/templates/side_bar.xml',
         ],
     },
     "external_dependencies": {"python": ["pandas"]},

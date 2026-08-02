@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -44,10 +44,24 @@ class HrEmployee(models.Model):
         """Create and update an attendance for the user employee"""
         employee = request.env['hr.employee'].sudo().browse(
             self.env.user.employee_id.id)
+        latitude = request.geoip.location.latitude
+        longitude = request.geoip.location.longitude
+        if latitude and longitude:
+            geo_obj = request.env['base.geocoder']
+            location_request = geo_obj._call_openstreetmap_reverse(latitude, longitude)
+            if location_request and location_request.get('display_name'):
+                location = location_request.get('display_name')
+            else:
+                location = _('Unknown')
+        else:
+            city = request.geoip.city.name
+            country = request.geoip.country.name
+            if city and country:
+                location = f"{city}, {country}"
+            else:
+                location = _('Unknown')
         employee.sudo()._attendance_action_change({
-            'city': request.geoip.city.name or _('Unknown'),
-            'country_name': request.geoip.country.name or
-                            request.geoip.continent.name or _('Unknown'),
+            'location': location,
             'latitude': request.geoip.location.latitude or False,
             'longitude': request.geoip.location.longitude or False,
             'ip_address': request.geoip.ip,
@@ -138,7 +152,7 @@ class HrEmployee(models.Model):
         WHERE (hr_leave.date_from::DATE,hr_leave.date_to::DATE) 
         OVERLAPS ('%s', '%s') and
         state='validate'""" % (today, today)
-        cr = self.env.cr
+        cr = self._cr
         cr.execute(query)
         leaves_today = cr.fetchall()
         first_day = date.today().replace(day=1)
@@ -150,13 +164,15 @@ class HrEmployee(models.Model):
                 WHERE (hr_leave.date_from::DATE,hr_leave.date_to::DATE) 
                 OVERLAPS ('%s', '%s')
                 and  state='validate'""" % (first_day, last_day)
-        cr = self.env.cr
+        cr = self._cr
         cr.execute(query)
         leaves_this_month = cr.fetchall()
         leaves_alloc_req = self.env['hr.leave.allocation'].sudo().search_count(
             [('state', 'in', ['confirm', 'validate1'])])
         timesheet_count = self.env['account.analytic.line'].sudo().search_count(
             [('project_id', '!=', False), ('user_id', '=', uid)])
+        contract_count = self.env['hr.version'].sudo().search_count(
+            [('employee_id', '=', employee[0]['id'])])
         timesheet_view_id = self.env.ref(
             'hr_timesheet.hr_timesheet_line_search')
         job_applications = self.env['hr.applicant'].sudo().search_count([])
@@ -190,6 +206,7 @@ class HrEmployee(models.Model):
                     'leaves_this_month': leaves_this_month,
                     'leaves_alloc_req': leaves_alloc_req,
                     'emp_timesheets': timesheet_count,
+                    'contracts_count': contract_count,
                     'job_applications': job_applications,
                     'timesheet_view_id': timesheet_view_id,
                     'experience': experience,
@@ -206,7 +223,7 @@ class HrEmployee(models.Model):
     @api.model
     def get_upcoming(self):
         """It returns upcoming events, announcements and birthday"""
-        cr = self.env.cr
+        cr = self._cr
         uid = request.session.uid
         employee = self.env['hr.employee'].search([('user_id', '=', uid)],
                                                   limit=1)
@@ -231,29 +248,26 @@ class HrEmployee(models.Model):
              ('position_ids', 'in', employee.job_id.id),
              ], fields=['announcement_reason', 'date_start', 'date_end'])
 
-        lang = f"'{self.env.context['lang']}'"
-        cr.execute("""select e.id, e.name ->> e.lang as name, e.date_begin,
-         e.date_end,rp.name as location
-        from event_event e
-        inner join res_partner rp 
-        on e.address_id = rp.id
-        and (e.date_begin >= now())
-        order by e.date_begin""")
-        event = cr.fetchall()
+        events = self.env['event.event'].search_read(
+            domain=[('date_begin', '>=', fields.Datetime.now())],
+            fields=['id','name', 'date_begin', 'date_end', 'address_id'],
+            order='date_begin'
+        )
+
         return {
             'birthday': birthday_employees,
-            'event': event,
+            'event': events,
             'announcement': announcements
         }
 
     @api.model
     def get_dept_employee(self):
         """Retrieve the details of employees in each department."""
-        cr = self.env.cr
-        cr.execute("""select department_id, hr_department.name,count(*)
-        from hr_employee join hr_department on 
-        hr_department.id=hr_employee.department_id
-        group by hr_employee.department_id,hr_department.name""")
+        cr = self._cr
+        cr.execute(""" SELECT e.department_id, d.name, COUNT(e.id)
+    FROM hr_employee_public e
+    JOIN hr_department d ON d.id = e.department_id
+    GROUP BY e.department_id, d.name""")
         dat = cr.fetchall()
         data = []
         for i in range(0, len(dat)):
@@ -438,7 +452,7 @@ class HrEmployee(models.Model):
     @api.model
     def join_resign_trends(self):
         """Returns join/resign details of departments"""
-        cr = self.env.cr
+        cr = self._cr
         month_list = []
         join_trend = []
         resign_trend = []
@@ -509,15 +523,15 @@ class HrEmployee(models.Model):
         SELECT (date_trunc('month', CURRENT_DATE))::date - interval '1' 
         month * s.a AS month_start
         FROM generate_series(0,11,1) AS s(a);"""
-        self.env.cr.execute(sql)
-        month_start_list = self.env.cr.fetchall()
+        self._cr.execute(sql)
+        month_start_list = self._cr.fetchall()
         for month_date in month_start_list:
-            self.env.cr.execute("""select count(id), 
+            self._cr.execute("""select count(id), 
             to_char(date '%s', 'Month YYYY') as l_month from hr_employee
             where resign_date> date '%s' or resign_date is null and 
             joining_date < date '%s'
             """ % (month_date[0], month_date[0], month_date[0],))
-            month_emp = self.env.cr.fetchone()
+            month_emp = self._cr.fetchone()
             match_join = \
                 list(filter(
                     lambda d: d['l_month'] == month_emp[1].split(' ')[:1][
@@ -568,8 +582,7 @@ class HrEmployee(models.Model):
         tasks = self.env['project.task'].sudo().search([
             ('user_ids', 'in', self.env.uid),
             ('active', '=', True)
-        ], order='date_deadline asc', limit=10)
-
+        ], order='date_deadline asc')
         task_data = []
         for task in tasks:
             task_data.append({
@@ -579,6 +592,5 @@ class HrEmployee(models.Model):
                 'date_deadline': task.date_deadline.strftime('%Y-%m-%d') if task.date_deadline else '',
                 'stage_name': task.stage_id.name if task.stage_id else 'No Stage',
             })
-
         return task_data
 

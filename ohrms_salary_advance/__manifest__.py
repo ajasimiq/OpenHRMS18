@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -34,8 +34,7 @@
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': "https://www.openhrms.com",
-    'depends': ['hr_payroll_community', 'hr', 'account',
-                'hr_contract', 'ohrms_loan',],
+    'depends': ['hr_payroll_community', 'hr', 'account', 'ohrms_loan',],
     'data': [
         'security/ir.model.access.csv',
         'security/salary_advance_security.xml',

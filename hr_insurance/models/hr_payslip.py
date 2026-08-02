@@ -3,8 +3,8 @@
 #   A part of Open HRMS Project <https://www.openhrms.com>
 #
 #    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
-#    Author: Raneesha M K (<https://www.cybrosys.com>)
+#    Copyright (C) 2026-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Author: Abhijith CK (<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
 #    GENERAL PUBLIC LICENSE (LGPL v3), Version 3.
@@ -19,17 +19,18 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from odoo import models
+from odoo import api,models
 
 
 class HrPayslip(models.Model):
     """Inherited to add fields"""
     _inherit = 'hr.payslip'
 
+    @api.model
     def get_inputs(self, contract_ids, date_from, date_to):
         """used get inputs , to add datas"""
         res = super().get_inputs(contract_ids, date_from, date_to)
-        contract_obj = self.env['hr.contract']
+        contract_obj = self.env['hr.version']
         for record in contract_ids:
             if contract_ids[0]:
                 emp_id = contract_obj.browse(record[0].id).employee_id

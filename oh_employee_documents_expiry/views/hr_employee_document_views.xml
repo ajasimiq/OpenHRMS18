@@ -35,7 +35,7 @@
                             <field name="expiry_date"/>
                             <field name="notification_type"/>
                             <field name="before_days"
-                                   invisible="notification_type == 'single'"/>
+                                   invisible="notification_type == 'single' or notification_type == False"/>
                         </group>
                     </group>
                     <notebook>
@@ -47,7 +47,7 @@
             </form>
         </field>
     </record>
-    <!--    List view of hr_employee_document model-->
+    <!--    Tree view of hr_employee_document model-->
     <record id='hr_employee_document_view_tree' model='ir.ui.view'>
         <field name="name">hr.employee.document.view.tree</field>
         <field name="model">hr.employee.document</field>
@@ -60,31 +60,25 @@
             </list>
         </field>
     </record>
-    <!--    Defines a search view for HR Employee Documents.-->
-    <record id="hr_employee_document_view_search" model="ir.ui.view">
-        <field name="name">hr.employee.document.view.search</field>
-        <field name="model">hr.employee.document</field>
-        <field name="arch" type="xml">
-            <search string="Employee Documents">
-                <group expand="0" string="Group By">
-                    <filter name="Employee" string="Employee" domain="[]"
-                            context="{'group_by':'employee_ref_id'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
+
     <!--    Configures an action window for HR Employee Documents.-->
     <record id="hr_employee_document_action" model="ir.actions.act_window">
         <field name="name">Employee Documents</field>
         <field name="res_model">hr.employee.document</field>
         <field name="view_mode">list,form</field>
         <field name="view_id" ref="hr_employee_document_view_tree"/>
-        <field name="context">{'search_default_Employee': 1}</field>
     </record>
     <!--    Creates a menu item for HR Employee Documents.-->
+    <menuitem id="hr_employee_menu"
+              name="Employees"
+              parent="hr.menu_hr_employee_payroll"
+              action="hr.open_view_employee_list_my"
+              groups="hr.group_hr_manager"/>
+
     <menuitem id="hr_employee_document_menu"
               name="Documents"
               parent="hr.menu_hr_employee_payroll"
               action="hr_employee_document_action"
               groups="hr.group_hr_manager"/>
+
 </odoo>

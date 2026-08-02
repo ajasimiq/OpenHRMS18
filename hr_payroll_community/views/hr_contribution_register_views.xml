@@ -8,6 +8,7 @@
                 <search string="Contribution Registers">
                     <field name="name" string="Contribution Registers"/>
                     <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="company_id"/>
                 </search>
             </field>
         </record>
@@ -22,6 +23,8 @@
                         <field name="partner_id"/>
                         <field name="company_id"
                                groups="base.group_multi_company"
+                               options="{'no_create': True}" class="oe_inline"/>
+                        <field name="company_id"
                                options="{'no_create': True}" class="oe_inline"/>
                     </group>
                     <newline/>

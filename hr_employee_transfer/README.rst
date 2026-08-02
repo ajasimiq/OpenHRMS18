@@ -4,7 +4,7 @@
 
 Open HRMS Branch Transfer
 =========================
-Transfer Employees from one company to another company.
+Transfer Employees from one branch to another branch of a company.
 
 Configuration
 =============
@@ -21,8 +21,9 @@ GNU General Public License, Version 3 (LGPL v3).
 
 Credits
 -------
-* Developer: (V18) Raneesha M K,
-             (V17) Aiswarya J P.
+* Developer: (V17) Aiswarya J P,
+             (V18) Raneesha M K,
+             (V19) Aiswarya J P
 Contact: odoo@cybrosys.com
 
 Contacts

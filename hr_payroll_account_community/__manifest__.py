@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -21,14 +21,12 @@
 #
 #############################################################################
 {
-    'name': 'Odoo18 Payroll Accounting',
-    'version': '19.0.1.0.0',
+    'name': 'Odoo19 Payroll Accounting',
+    'version': '19.0.1.0.1',
     'category': 'Human Resources',
-    'summary': """Odoo 18 HR Payroll, payroll, Odoo18 Payroll, Odoo Payroll,
-     Payroll, Odoo18 Payslips, Employee Payroll, HR Payroll,Odoo18, Odoo18 HR,
-     odoo hr,odoo18, Accounting,Odoo Apps""",
-    'description': """ This module helps you to manage payroll and
-     accounting.""",
+    'summary': """Helps you to manage payroll and 
+     accounting""",
+    'description': """Comprehensive solution for managing payroll and accounting processes in Odoo 19.""",
     'author': 'Cybrosys Techno Solutions',
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',

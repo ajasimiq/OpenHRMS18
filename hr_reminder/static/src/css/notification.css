@@ -24,3 +24,24 @@
     padding: 10px;
     border-radius: 10px;
 }
+.dropdown-menu {
+    animation: fadeIn 0.2s ease-in-out;
+    border: none;
+}
+
+.select-rounded {
+    border-radius: 50px !important;
+}
+.reminder-dropdown {
+    background-color: #F6F3FB !important;  /* Light lavender for Odoo-style theme */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 12px !important;
+    min-width: 250px;
+    border: none;
+}
+
+.dropdown-menu-left {
+    right: 0 !important;
+    left: auto !important;
+    transform: translateX(-100%) !important;
+}

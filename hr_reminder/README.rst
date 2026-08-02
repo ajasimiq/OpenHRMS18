@@ -22,7 +22,8 @@ General Public License v3.0 (LGPL v3)
 
 Credits
 -------
-Developer : (V18) Raneesha M K
+Developer : (V19) Aiswarya J P
+            (V18) Raneesha M K
             (V17) Arjun S
             (V16) Sajna
             (V15) Mily

@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -56,14 +56,14 @@ class HrEmployee(models.Model):
                                       string='Family',
                                       help='Family Information')
 
-    @api.depends('contract_id')
+    @api.depends('version_id')
     def _compute_joining_date(self):
         """Compute the joining date of the employee based on their contract
          information."""
         for employee in self:
             employee.joining_date = min(
-                employee.contract_id.mapped('date_start')) \
-                if employee.contract_id else False
+                employee.version_id.mapped('date_start')) \
+                if employee.version_id else False
 
     @api.onchange('spouse_complete_name', 'spouse_birthdate')
     def _onchange_spouse_complete_name(self):

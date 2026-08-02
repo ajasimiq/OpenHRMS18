@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -28,8 +28,7 @@ class HrContract(models.Model):
     Employee contract based on the visa, work permits
     allows to configure different Salary structure
     """
-    _inherit = 'hr.contract'
-    _description = 'Employee Contract'
+    _inherit = 'hr.version'
 
     struct_id = fields.Many2one('hr.payroll.structure',
                                 string='Salary Structure',
@@ -63,6 +62,8 @@ class HrContract(models.Model):
         and without duplicate
         """
         structures = self.mapped('struct_id')
+        # structures = self.mapped('contract_template_id.struct_id')
+
         if not structures:
             return []
         # YTI TODO return browse records

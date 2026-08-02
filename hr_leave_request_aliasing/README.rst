@@ -21,8 +21,9 @@ Lesser General Public License, Version 3 (LGPL v3).
 
 Credits
 -------
-* Developer:(V18) Raneesha MK.
-            (V17) Unnimaya C O.
+* Developer: (V17) Unnimaya C O,
+             (V18) Raneesha MK,
+             (V19) Aiswarya J P.
 
 Contacts
 --------

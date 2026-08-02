@@ -21,7 +21,8 @@ General Public License, Version 3 (LGPL-3).
 
 Credits
 -------
-Developer: (V18) Raneesha MK,
+Developer: (V19) Risvana AR,
+           (V18) Raneesha MK
            (V17) Subina P
 Contact: odoo@cybrosys.com
 

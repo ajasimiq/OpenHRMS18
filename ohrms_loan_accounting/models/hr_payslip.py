@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -30,15 +30,12 @@ class HrPayslipAcc(models.Model):
     _inherit = 'hr.payslip'
 
     def action_payslip_done(self):
-        """ Calculate the dates and make the status as done"""
+        """Calculate the dates and mark loan lines as paid"""
         for line in self.input_line_ids:
             date_from = self.date_from
-            tym = datetime.combine(fields.Date.from_string(date_from),
-                                   time.min)
+            tym = datetime.combine(fields.Date.from_string(date_from), time.min)
             locale = self.env.context.get('lang') or 'en_US'
-            month = tools.ustr(
-                babel.dates.format_date(date=tym, format='MMMM-y',
-                                        locale=locale))
+            month = str(babel.dates.format_date(date=tym, format='MMMM-y', locale=locale))
             if line.loan_line_id:
                 line.loan_line_id.action_paid_amount(month)
         return super(HrPayslipAcc, self).action_payslip_done()

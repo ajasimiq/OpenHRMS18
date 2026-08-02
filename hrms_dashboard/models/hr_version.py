@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -20,18 +20,19 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from odoo import fields, models
+from odoo import models, api
 
+class HrVersion(models.Model):
+    _inherit = 'hr.version'
 
-class HrContract(models.Model):
-    """Extends the standard 'hr.contract' model to include additional fields
-        for employee contracts."""
-    _inherit = 'hr.contract'
-    _description = 'Employee Contract'
-
-    analytic_account_id = fields.Many2one('account.analytic.account',
-                                          string='Analytic Account',
-                                          help="Select Analytic account")
-    journal_id = fields.Many2one('account.journal',
-                                 string='Salary Journal',
-                                 help="Journal associated with the record")
+    @api.model
+    def get_hr_version_list_view_id(self):
+        """Return the ID of the hr.version list/tree view for dashboard actions"""
+        view = self.env.ref('hr.hr_version_list_view', raise_if_not_found=False)
+        if view:
+            return view.id
+        view = self.env['ir.ui.view'].search([
+            ('model', '=', 'hr.version'),
+            ('type', '=', 'list')
+        ], limit=1)
+        return view.id if view else False

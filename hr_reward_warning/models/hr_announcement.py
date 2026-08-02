@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -104,7 +104,8 @@ class HrAnnouncement(models.Model):
             else:
                 vals['name'] = self.env['ir.sequence'].next_by_code(
                     'hr.announcement')
-        return super().create(vals_list)
+
+        return super(HrAnnouncement, self).create(vals_list)
 
     def action_reject_announcement(self):
         """ Refuse button action """

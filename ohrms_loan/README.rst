@@ -21,7 +21,8 @@ GNU GENERAL PUBLIC LICENSE, Version 3 (LGPLv3)
 
 Credits
 -------
-Developer:  (V18)  Raneesha MK.
+Developer:  (V18)  Risvana AR,
+            (V18)  Raneesha MK,
             (V17)  Sreeshanth V S.
 
 Contacts

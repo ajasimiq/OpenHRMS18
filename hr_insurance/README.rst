@@ -28,7 +28,8 @@ Developers:
     (V15) Sruthy M ,
     (V16) Kartik ,
     (V17) Anjhana A K ,
-    (V18) Raneesha M K
+    (V18) Raneesha M K,
+    (V19) Abhijith CK
 Contact: odoo@cybrosys.com
 
 Contacts

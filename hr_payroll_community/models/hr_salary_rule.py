@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -62,9 +62,12 @@ class HrSalaryRule(models.Model):
     parent_rule_id = fields.Many2one('hr.salary.rule',
                                      string='Parent Salary Rule', index=True,
                                      help="Choose Hr Salary Rule")
-    company_id = fields.Many2one('res.company', string='Company',
-                                 help="Choose Company",
-                                 default=lambda self: self.env.company)
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        required=True,
+        default=lambda self: self.env.company.id
+    )
     condition_select = fields.Selection([
         ('none', 'Always True'),
         ('range', 'Range'),
@@ -85,7 +88,7 @@ class HrSalaryRule(models.Model):
     #----------------------
     # payslip: object containing the payslips
     # employee: hr.employee object
-    # contract: hr.contract object
+    # contract: hr.version object
     # rules: object containing the rules code (previously computed)
     # categories: object containing the computed salary rule categories 
     # (sum of amount of all rules belonging to that category).
@@ -110,9 +113,11 @@ class HrSalaryRule(models.Model):
         ('code', 'Python Code'),
     ], string='Amount Type', index=True, required=True, default='fix',
         help="The computation method for the rule amount.")
+
     amount_fix = fields.Float(string='Fixed Amount',
                               digits='Payroll',
                               help="Set a Fixed Amount")
+
     amount_percentage = fields.Float(string='Percentage (%)',
                                      digits='Payroll Rate',
                                      help='For example, enter 50.0 to apply '
@@ -123,7 +128,7 @@ class HrSalaryRule(models.Model):
             #----------------------
             # payslip: object containing the payslips
             # employee: hr.employee object
-            # contract: hr.contract object
+            # contract: hr.version object
             # rules: object containing the rules code (previously computed)
             # categories: object containing the computed salary rule categories 
             # (sum of amount of all rules belonging to that category).
@@ -178,6 +183,14 @@ class HrSalaryRule(models.Model):
         """
         for rec in self:
             rec.ensure_one()
+
+            if 'worked_days' in localdict and hasattr(localdict['worked_days'], 'dict'):
+                worked_days_obj = localdict['worked_days']
+                for code in worked_days_obj.dict:
+                    worked_day_line = worked_days_obj.dict[code]
+                    # Add direct access variables for number_of_days
+                    localdict[f'{code}'] = worked_day_line.number_of_days
+
             if rec.amount_select == 'fix':
                 try:
                     return rec.amount_fix, float(
@@ -199,8 +212,8 @@ class HrSalaryRule(models.Model):
                             rec.name, rec.code))
             else:
                 try:
-                    safe_eval(rec.amount_python_compute, localdict, mode='exec',
-                              nocopy=True)
+
+                    safe_eval(rec.amount_python_compute, localdict, mode='exec')
                     return (float(localdict['result']),
                             'result_qty' in localdict and
                             localdict['result_qty'] or 1.0, 'result_rate'

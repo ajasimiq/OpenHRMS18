@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -66,8 +66,9 @@ class HrResignation(models.Model):
                                                'from the company.')
     reason = fields.Text(string="Reason", required=True,
                          help='Specify reason for leaving the company')
-    notice_period = fields.Char(string="Notice Period",
-                                help="Notice Period of the employee.")
+    notice_period = fields.Integer(string="Notice Period",
+                                compute="_compute_notice_period",
+                                help="Notice Period of the employee in days")
     state = fields.Selection(
         [('draft', 'Draft'), ('confirm', 'Confirm'), ('approved', 'Approved'),
          ('cancel', 'Rejected')],
@@ -80,12 +81,17 @@ class HrResignation(models.Model):
                                      compute="_compute_change_employee",
                                      help="Checks , if the user has permission"
                                           " to change the employee")
-    employee_contract = fields.Char(string="Contract")
+    employee_contract = fields.Char(
+        string="Contract Template",
+        compute="_compute_notice_period",
+        store=True,
+        help="Current Contract of the employee"
+    )
 
     @api.depends('employee_id')
     def _compute_change_employee(self):
         """ Check whether the user has the permission to change the employee"""
-        res_user = self.env['res.users'].browse(self.env.uid)
+        res_user = self.env.user
         self.change_employee = res_user.has_group('hr.group_hr_user')
 
     @api.constrains('employee_id')
@@ -100,7 +106,7 @@ class HrResignation(models.Model):
                     raise ValidationError(
                         _('You cannot create a request for other employees'))
 
-    @api.constrains('joined_date')
+    @api.constrains('employee_id')
     def _check_joined_date(self):
         """ Check if there is an active resignation request for the
             same employee with a confirmed or approved state, based on the
@@ -114,24 +120,32 @@ class HrResignation(models.Model):
                     _('There is a resignation request in confirmed or'
                       ' approved state for this employee'))
 
-    @api.onchange('employee_id')
-    def _onchange_employee_id(self):
-        """ Method triggered when the 'employee_id' field is changed."""
-        self.joined_date = self.employee_id.joining_date
-        if self.employee_id:
-            resignation_request = self.env['hr.resignation'].search(
-                [('employee_id', '=', self.employee_id.id),
-                 ('state', 'in', ['confirm', 'approved'])])
-            if resignation_request:
-                raise ValidationError(
-                    _('There is a resignation request in confirmed or'
-                      ' approved state for this employee'))
-            employee_contract = self.env['hr.contract'].search(
-                [('employee_id', '=', self.employee_id.id)])
-            for contracts in employee_contract:
-                if contracts.state == 'open':
-                    self.employee_contract = contracts.name
-                    self.notice_period = contracts.notice_days
+    @api.depends(
+        'employee_id',
+        'employee_id.joining_date',
+        'employee_id.version_id.date_start',
+        'employee_id.version_id.date_end'
+    )
+    def _compute_notice_period(self):
+        """Compute notice period for each resignation."""
+        today = fields.Date.today()
+        for rec in self:
+            rec.joined_date = rec.employee_id.joining_date if rec.employee_id else False
+            rec.employee_contract = False
+            rec.notice_period = 0
+
+            if rec.employee_id:
+                contract = self.env['hr.version'].sudo().search([
+                    ('employee_id', '=', rec.employee_id.id),
+                    '|', ('date_start', '=', False),
+                    ('date_start', '<=', today),
+                    '|', ('date_end', '=', False),
+                    ('date_end', '>=', today),
+                ], limit=1)
+
+                if contract:
+                    rec.employee_contract = contract.contract_template_id.name
+                    rec.notice_period = contract.notice_days
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -185,24 +199,17 @@ class HrResignation(models.Model):
         for resignation in self:
             if (resignation.expected_revealing_date and
                     resignation.resign_confirm_date):
-                employee_contract = self.env['hr.contract'].search(
+                employee_contract = self.env['hr.version'].sudo().search(
                     [('employee_id', '=', self.employee_id.id)])
                 if not employee_contract:
                     raise ValidationError(
                         _("There are no Contracts found for this employee"))
                 for contract in employee_contract:
-                    if contract.state == 'open':
-                        resignation.employee_contract = contract.name
-                        resignation.state = 'approved'
-                        resignation.approved_revealing_date = (
-                                resignation.resign_confirm_date + timedelta(
-                            days=contract.notice_days))
-                    else:
-                        resignation.approved_revealing_date = (
-                            resignation.expected_revealing_date)
-                    # Cancelling contract
-                    contract.state = 'cancel' if contract.state == "open" else \
-                        contract.state
+                    resignation.state = 'approved'
+                    resignation.approved_revealing_date = (
+                            resignation.resign_confirm_date + timedelta(
+                        days=contract.notice_days))
+
                 # Changing state of the employee if resigning today
                 if resignation.expected_revealing_date <= fields.Date.today():
                     resignation._process_employee_departure(
@@ -247,13 +254,20 @@ class HrResignation(models.Model):
             employee.fired = True
         else:
             employee.resigned = True
-        running_contract_ids = self.env['hr.contract'].search([
+        # Odoo 19 replaced hr.contract with hr.version and dropped the
+        # draft/open/close state machine entirely, so a contract can no longer
+        # be "closed". The running version is the one whose date window covers
+        # today, and ending employment means stamping its contract end date.
+        # contract_date_end is the stored, writable field (date_end is
+        # computed) and is restricted to HR managers, hence the sudo.
+        running_versions = self.env['hr.version'].sudo().search([
             ('employee_id', '=', employee.id),
-            ('company_id', '=', employee.company_id.id),
-            ('state', '=', 'open'),
-        ]).filtered(lambda c: c.date_start <= today and (
-                    not c.date_end or c.date_end >= today))
-        running_contract_ids.state = 'close'
+            '|', ('date_start', '=', False), ('date_start', '<=', today),
+            '|', ('date_end', '=', False), ('date_end', '>=', today),
+        ])
+        for version in running_versions:
+            if not version.contract_date_end:
+                version.contract_date_end = revealing_date
         employee.departure_reason_id = self._get_departure_reason()
         employee.departure_date = self.approved_revealing_date or revealing_date
         # Removing and deactivating user

@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -21,7 +21,7 @@
 #
 #############################################################################
 from datetime import timedelta
-from odoo import http, fields
+from odoo import fields, http
 from odoo.http import request
 
 
@@ -45,19 +45,19 @@ class Reminders(http.Controller):
                     'name': reminder.name
                 })
             elif reminder.search_by == 'set_period':
-                if (fields.date.today() >=
-                        reminder.date_from and fields.date.today()
+                if (fields.Date.today() >=
+                        reminder.date_from and fields.Date.today()
                         <= reminder.date_to and (
-                        not reminder.expiry_date or fields.date.today()
-                        <= reminder.expiry_date)):
+                                not reminder.expiry_date or fields.Date.today()
+                                <= reminder.expiry_date)):
                     reminders.append({
                         'id': reminder.id,
                         'name': reminder.name
                     })
             else:
-                if fields.date.today() >= reminder.date_set - timedelta(
+                if fields.Date.today() >= reminder.date_set - timedelta(
                         days=reminder.days_before) and (
-                        not reminder.expiry_date or fields.date.today()
+                        not reminder.expiry_date or fields.Date.today()
                         <= reminder.expiry_date):
                     reminders.append({
                         'id': reminder.id,
@@ -67,11 +67,11 @@ class Reminders(http.Controller):
 
     @http.route('/hr_reminder/reminder_active', type='jsonrpc', auth="user")
     def reminder_active(self, **kwargs):
-        """Method reminder_active returns the current reminder when clicked in
+        """Returns the current reminder when clicked in
         view button in the systray."""
         value = []
         for reminder in request.env['hr.reminder'].sudo().search([
-                ('name', '=', kwargs.get('reminder_name'))]):
+            ('name', '=', kwargs.get('reminder_name'))]):
             value.append(reminder.model_id.model)
             value.append(reminder.field_id.name)
             value.append(reminder.search_by)
@@ -84,5 +84,5 @@ class Reminders(http.Controller):
             value.append(reminder.days_before)
             if reminder.date_set:
                 value.append(reminder.date_set - timedelta(
-                        days=reminder.days_before))
+                    days=reminder.days_before))
         return value

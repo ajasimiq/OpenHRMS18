@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -21,10 +21,11 @@
 #
 #############################################################################
 {
-    'name': 'Odoo 18 HR Payroll',
-    'version': '19.0.1.0.0',
+    'name': 'Odoo 19 HR Payroll',
+    'version': '19.0.1.0.1',
     'category': 'Human Resources',
-    'summary': """Odoo 18 HR Payroll, Odoo18 Payroll, Payroll, Odoo Payroll, Payroll V18, Odoo18, Payroll Management, Odoo18 Payslip""",
+    'summary': """Odoo 19 HR Payroll, Odoo19 Payroll, Payroll, Odoo Payroll,
+    Payroll V19, Odoo19, Payroll Management, Odoo19 Payslip""",
     'description': """The system automates payroll management by streamlining
      key processes such as calculating employee salaries, deductions, and 
      benefits based on predefined rules and regulations. It also facilitates
@@ -36,8 +37,9 @@
     'company': 'Cybrosys Techno Solutions',
     'maintainer': 'Cybrosys Techno Solutions',
     'website': 'https://www.openhrms.com',
-    'depends': ['hr_contract', 'hr_holidays'],
+    'depends': ['hr_holidays'],
     'data': [
+        'data/ir_module_category_data.xml',
         'security/hr_payroll_community_security.xml',
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
@@ -49,7 +51,7 @@
         'report/report_payslip_templates.xml',
         'report/report_payslip_details_templates.xml',
         'views/hr_leave_type_views.xml',
-        'views/hr_contract_views.xml',
+        'views/hr_version_views.xml',
         'views/hr_salary_rule_views.xml',
         'views/hr_salary_rule_category_views.xml',
         'views/hr_contribution_register_views.xml',
@@ -61,7 +63,7 @@
         'views/res_config_settings_views.xml',
     ],
     'demo': ['data/hr_payroll_community_demo.xml'],
-    'images': ['static/description/banner.png'],
+    'images': ['static/description/banner.jpg'],
     'license': 'LGPL-3',
     'installable': True,
     'auto_install': False,

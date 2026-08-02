@@ -27,7 +27,6 @@ class ReminderMenu extends Component {
         ev.stopPropagation();
         ev.preventDefault();
         var self = this;
-        console.log((this.select.el.querySelector("#reminder_select")).value)
         var value = (this.select.el.querySelector("#reminder_select")).value;
         await rpc('/hr_reminder/reminder_active', {'reminder_name':value}).then(function(current){
             self.reminder = current

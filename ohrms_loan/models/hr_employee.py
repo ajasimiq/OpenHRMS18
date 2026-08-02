@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -37,3 +37,15 @@ class HrEmployee(models.Model):
         for rec in self:
             rec.loan_count = rec.env['hr.loan'].search_count(
                 [('employee_id', '=', rec.id)])
+
+    def action_view_loans(self):
+        """Open loans only for this employee."""
+        self.ensure_one()
+        return {
+            'name': 'Loans',
+            'type': 'ir.actions.act_window',
+            'res_model': 'hr.loan',
+            'view_mode': 'list,form',
+            'domain': [('employee_id', '=', self.id)],
+            'context': dict(self.env.context, default_employee_id=self.id),
+        }

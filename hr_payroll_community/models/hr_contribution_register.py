@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -28,10 +28,8 @@ class HrContributionRegister(models.Model):
     _name = 'hr.contribution.register'
     _description = 'Contribution Register'
 
-    company_id = fields.Many2one(
-        comodel_name='res.company', string='Company',
-        help="Choose Company for Register",
-        default=lambda self: self.env.company)
+    company_id = fields.Many2one('res.company',string='Company',
+                                 required=True,default=lambda self: self.env.company.id)
     partner_id = fields.Many2one('res.partner', string='Partner',
                                  help="Choose Partner for Register")
     name = fields.Char(required=True, string="Name",

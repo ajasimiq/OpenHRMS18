@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -22,28 +22,20 @@
 #############################################################################
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from odoo.tools import DEFAULT_SERVER_DATE_FORMAT
 
 
 class EmployeeTransfer(models.Model):
-    """Model for managing Employee Transfers."""
+    """Model for managing employee transfers between companies."""
     _name = 'employee.transfer'
     _description = 'Employee Transfer'
     _order = "id desc"
-
-    def _default_responsible_employee_id(self):
-        """Get the default employee for the responsible_employee_id field
-         in employee_transfer."""
-        emp_ids = self.env['hr.employee'].search([
-            ('user_id', '=', self.env.uid)])
-        return emp_ids and emp_ids[0] or False
 
     name = fields.Char(
         string='Name', help='Name of the Transfer',
         copy=False, default=lambda self: _('New'), readonly=True)
     employee_id = fields.Many2one(
         'hr.employee', string='Employee', required=True,
-        help='Choose the employee you intend to transfer')
+        help='Select the employee who is being transferred.')
     old_employee_id = fields.Many2one(
         'hr.employee', string='Old Employee', help='Old employee details')
     transfer_date = fields.Date(string='Date',
@@ -64,84 +56,72 @@ class EmployeeTransfer(models.Model):
         Cancelled: Transfer is cancelled.""")
     company_id = fields.Many2one('res.company', string='Company',
                                  related='employee_id.company_id',
-                                 help="Company of transfer")
+                                 help="The current company of the employee before the transfer.")
     note = fields.Text(
         string='Internal Notes',
-        help="Specify notes for the transfer if any")
+        help="Enter any relevant notes regarding the transfer process or reasons for transfer.")
     transferred = fields.Boolean(
         string='Transferred', copy=False, help="Transferred",
         default=False, compute='_compute_transferred')
     responsible_employee_id = fields.Many2one(
         comodel_name='hr.employee', string='Responsible',
-        default=_default_responsible_employee_id, readonly=True,
+        default=lambda self: self.env['hr.employee'].search([('user_id', '=', self.env.uid)], limit=1),
+        readonly=True,
         help="The person responsible for the transfer.")
 
     def _compute_transferred(self):
         """Compute the 'transferred' status for the record."""
         for transfer in self:
-            transfer.transferred = True if \
-                transfer.transfer_company_id in transfer.env.user.company_ids \
-                else False
+            transfer.transferred = transfer.transfer_company_id in transfer.env.user.company_ids
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Create an employee transfer record and prefix the 'name' with
+        'Transfer: ' followed by the employee's name.
+
+        Must be model_create_multi: with @api.model the ORM hands this a single
+        dict, so iterating it yields key strings and vals.get() raises
+        AttributeError on every create."""
+        for vals in vals_list:
+            employee = self.env['hr.employee'].browse(vals.get('employee_id'))
+            vals['name'] = "Transfer: %s" % (employee.name or '')
+        return super(EmployeeTransfer, self).create(vals_list)
 
     def action_transfer(self):
-        """Transfer button function."""
+        """Handle employee transfer logic."""
         if not self.transfer_company_id:
-            raise UserError(_(
-                'You should select a Company.'))
+            raise UserError(_('Please select a company for the transfer.'))
         if self.transfer_company_id == self.company_id:
-            raise UserError(_(
-                'You cannot transfer an Employee to the same Company.'))
+            raise UserError(_('You cannot transfer the employee to the same company.'))
         self.state = 'transfer'
-        return {
-            'warning': {
-                'title': _("Warning"),
-                'message': _(
-                    "This employee will remains on the same company until the "
-                    "Transferred branch accept this transfer request"),
-            },
-        }
 
     def action_receive_employee(self):
-        """Receive button function."""
-        self.old_employee_id = self.employee_id
-        employee = self.employee_id.sudo().read(
-            ['name', 'private_email', 'gender',
-             'identification_id', 'passport_id'])[0]
-        del employee['id']
-        employee.update({
+        """Handle employee reception logic during the transfer."""
+        employee_data = self.employee_id.sudo().read(
+            ['name', 'image_1920','private_email', 'sex', 'identification_id', 'passport_id', 'birthday', 'legal_name',
+             'place_of_birth', 'emergency_contact', 'emergency_phone', 'country_id'])[0]
+        del employee_data['id']
+        employee_data.update({
             'company_id': self.transfer_company_id.id
         })
-        new_emp = self.env['hr.employee'].sudo().create(employee)
-        for contract in self.env['hr.contract'].search(
-                [('employee_id', '=', self.employee_id.id)]):
-            if contract.date_end:
-                continue
-            else:
-                contract.write({'date_end': fields.date.today().strftime(
-                    DEFAULT_SERVER_DATE_FORMAT)})
-        self.employee_id = new_emp
-        self.old_employee_id.sudo().write({'active': False})
+        new_employee = self.env['hr.employee'].sudo().create(employee_data)
+
+        # Set the contract start date for the new employee
+        new_employee.contract_date_start = self.transfer_date
+        self.old_employee_id = self.employee_id
+        self.employee_id = new_employee
+        self.old_employee_id.sudo().active = False
+        self.state = 'done'
+
         return {
-            'name': _('Contract'),
+            'name': _('Employees'),
             'view_mode': 'form',
-            'res_model': 'hr.contract',
+            'res_model': 'hr.employee',
+            'res_id': new_employee.id,
             'type': 'ir.actions.act_window',
             'target': 'current',
-            'context': {'default_employee_id': self.employee_id.id,
-                        'default_date_start': self.transfer_date,
-                        'default_emp_transfer': self.id,
-                        }, }
+        }
 
     def cancel_transfer(self):
         """Transfer cancel function."""
         self.state = 'cancel'
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        """Create new employee transfer records.
-        It customizes the 'name' field by prefixing it with "Transfer:
-         " followed by the name of the employee being transferred."""
-        for vals in vals_list:
-            vals['name'] = "Transfer: " + self.env['hr.employee'].browse(
-                vals['employee_id']).name
-        return super().create(vals_list)

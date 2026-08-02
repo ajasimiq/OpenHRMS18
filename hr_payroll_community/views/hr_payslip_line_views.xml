@@ -50,7 +50,7 @@
     </record>
     <!--  Payslip Line search option  -->
     <record id="hr_payslip_line_search" model="ir.ui.view">
-        <field name="name">hr.payslip.line.select</field>
+        <field name="name">hr.payslip.line.search</field>
         <field name="model">hr.payslip.line</field>
         <field name="arch" type="xml">
             <search string="Search Payslip Lines">
@@ -59,15 +59,11 @@
                 <field name="amount_select"/>
                 <field name="slip_id"/>
                 <field name="category_id"/>
-                <group col="8" colspan="4" expand="0" string="Group By">
-                    <filter string="Salary Rule Category" name="category_id"
-                            context="{'group_by':'category_id'}"/>
-                    <filter string="Contribution Register" name="register_id"
-                            context="{'group_by':'register_id'}"/>
-                    <filter string="Amount Type" name="amount_select"
-                            context="{'group_by':'amount_select'}"/>
-                    <filter string="Employees" name="employee_id"
-                            context="{'group_by':'employee_id'}"/>
+                <group>
+                    <filter string="Salary Rule Category" name="category_id" context="{'group_by':'category_id'}"/>
+                    <filter string="Contribution Register" name="register_id" context="{'group_by':'register_id'}"/>
+                    <filter string="Amount Type" name="amount_select" context="{'group_by':'amount_select'}"/>
+                    <filter string="Employees" name="employee_id" context="{'group_by':'employee_id'}"/>
                 </group>
             </search>
         </field>
@@ -237,6 +233,7 @@
                                     <field name="company_id"
                                            groups="base.group_multi_company"
                                            readonly="state != 'draft'"/>
+
                                     <field name="payslip_run_id"
                                            domain="[('state','=','draft')]"
                                            readonly="state != 'draft'"/>

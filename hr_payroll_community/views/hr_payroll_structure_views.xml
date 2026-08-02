@@ -11,6 +11,7 @@
                     <field name="rule_ids"/>
                     <field name="company_id" groups="base.group_multi_company"
                            options="{'no_create': True}"/>
+
                 </list>
             </field>
         </record>

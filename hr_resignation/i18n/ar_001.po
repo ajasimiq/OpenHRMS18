@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-27 10:24+0000\n"
-"PO-Revision-Date: 2022-06-27 10:24+0000\n"
+"POT-Creation-Date: 2025-09-13 05:32+0000\n"
+"PO-Revision-Date: 2025-09-13 05:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,9 +21,9 @@ msgid "Action Needed"
 msgstr "الإجراءات اللازمة"
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Approve"
-msgstr "يوافق"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields.selection,name:hr_resignation.selection__hr_resignation__state__approved
@@ -36,11 +36,11 @@ msgid "Approved Last Day Of Employee"
 msgstr "آخر يوم معتمد للموظف"
 
 #. module: hr_resignation
-#: model:ir.actions.act_window,name:hr_resignation.view_approved_resignation
-#: model:ir.ui.menu,name:hr_resignation.employee_resignation_approved
-#: model_terms:ir.actions.act_window,help:hr_resignation.view_approved_resignation
+#: model:ir.actions.act_window,name:hr_resignation.hr_resignation_approved_action
+#: model:ir.ui.menu,name:hr_resignation.hr_resignation_menu_approved_request
+#: model_terms:ir.actions.act_window,help:hr_resignation.hr_resignation_approved_action
 msgid "Approved Resignation"
-msgstr "تمت الموافقة على الاستقالة"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__message_attachment_count
@@ -48,13 +48,23 @@ msgid "Attachment Count"
 msgstr "عدد المرفقات"
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Cancel"
-msgstr "إلغاء"
+msgstr ""
+
+#. module: hr_resignation
+#: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__change_employee
+msgid "Change Employee"
+msgstr ""
+
+#. module: hr_resignation
+#: model:ir.model.fields,help:hr_resignation.field_hr_resignation__change_employee
+msgid "Checks , if the user has permission to change the employee"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields.selection,name:hr_resignation.selection__hr_resignation__state__confirm
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Confirm"
 msgstr "تؤكد"
 
@@ -62,6 +72,11 @@ msgstr "تؤكد"
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__resign_confirm_date
 msgid "Confirmed Date"
 msgstr "تاريخ مؤكد"
+
+#. module: hr_resignation
+#: model_terms:ir.actions.act_window,help:hr_resignation.hr_resignation_action
+msgid "Create the First Resignation"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__create_uid
@@ -89,9 +104,9 @@ msgid "Date on which the request is confirmed by the manager."
 msgstr "التاريخ الذي تم فيه تأكيد الطلب من قبل المدير."
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Dates"
-msgstr "تواريخ"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__department_id
@@ -104,9 +119,10 @@ msgid "Department of the employee"
 msgstr "قسم الموظف"
 
 #. module: hr_resignation
+#: model:ir.model.fields,field_description:hr_resignation.field_hr_employee__display_name
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__display_name
 msgid "Display Name"
-msgstr "اسم العرض"
+msgstr "اسم العرض "
 
 #. module: hr_resignation
 #: model:ir.model.fields.selection,name:hr_resignation.selection__hr_resignation__state__draft
@@ -125,25 +141,21 @@ msgid "Employee Contract"
 msgstr "عقد الموظف"
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Employee Details"
-msgstr "تفاصيل الموظف"
+msgstr ""
 
 #. module: hr_resignation
-#: model:ir.actions.act_window,name:hr_resignation.view_employee_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_tree
+#: model:ir.actions.act_window,name:hr_resignation.hr_resignation_action
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_tree
 msgid "Employee Resignation"
-msgstr "استقالة الموظف"
-
-#. module: hr_resignation
-#: model_terms:ir.actions.act_window,help:hr_resignation.view_employee_resignation
-msgid "Employee Resignation Form"
-msgstr "نموذج استقالة الموظف"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,help:hr_resignation.field_hr_resignation__expected_revealing_date
-msgid "Employee requested date on which he is revealing from the company."
+msgid ""
+"Employee requested date on which employee is revealing from the company."
 msgstr "طلب الموظف التاريخ الذي يكشف فيه من الشركة."
 
 #. module: hr_resignation
@@ -152,9 +164,9 @@ msgid "Fired"
 msgstr "مطرود"
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_employee_resigned_filter
+#: model_terms:ir.ui.view,arch_db:hr_resignation.view_employee_filter
 msgid "Fired Employees"
-msgstr "الموظفين المفصولين"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields.selection,name:hr_resignation.selection__hr_resignation__resignation_type__fired
@@ -172,11 +184,14 @@ msgid "Followers (Partners)"
 msgstr "(المتابعون (الشركاء"
 
 #. module: hr_resignation
-#: model:ir.actions.server,name:hr_resignation.ir_cron_data_employee_resignation_ir_actions_server
-#: model:ir.cron,cron_name:hr_resignation.ir_cron_data_employee_resignation
-#: model:ir.cron,name:hr_resignation.ir_cron_data_employee_resignation
-msgid "HR Resignation: update employee"
-msgstr "استقالة الموارد البشرية: تحديث الموظف"
+#: model:ir.model,name:hr_resignation.model_hr_resignation
+msgid "HR Resignation"
+msgstr "ساعة الاستقالة"
+
+#. module: hr_resignation
+#: model:ir.actions.server,name:hr_resignation.ir_cron_employee_resignation_ir_actions_server
+msgid "HR Resignation: Update Employee Status"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__has_message
@@ -184,9 +199,10 @@ msgid "Has Message"
 msgstr "رسالة"
 
 #. module: hr_resignation
+#: model:ir.model.fields,field_description:hr_resignation.field_hr_employee__id
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__id
 msgid "ID"
-msgstr "هوية شخصية"
+msgstr "المُعرف"
 
 #. module: hr_resignation
 #: model:ir.model.fields,help:hr_resignation.field_hr_employee__fired
@@ -200,7 +216,6 @@ msgstr "إذا تم التحديد ، فقد استقال الموظف"
 
 #. module: hr_resignation
 #: model:ir.model.fields,help:hr_resignation.field_hr_resignation__message_needaction
-#: model:ir.model.fields,help:hr_resignation.field_hr_resignation__message_unread
 msgid "If checked, new messages require your attention."
 msgstr "إذا تم تحديد ذلك ، فإن الرسائل الجديدة تتطلب اهتمامك."
 
@@ -231,11 +246,6 @@ msgid "Last Day of Employee"
 msgstr "آخر يوم للموظف"
 
 #. module: hr_resignation
-#: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation____last_update
-msgid "Last Modified on"
-msgstr "آخر تعديل في"
-
-#. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__write_uid
 msgid "Last Updated by"
 msgstr "آخر تحديث بواسطة"
@@ -246,15 +256,10 @@ msgid "Last Updated on"
 msgstr "آخر تحديث في"
 
 #. module: hr_resignation
+#. odoo-python
 #: code:addons/hr_resignation/models/hr_resignation.py:0
-#, python-format
 msgid "Last date of the Employee must be anterior to Joining date"
-msgstr "يجب أن يكون آخر موعد للموظف سابقًا لتاريخ الالتحاق"
-
-#. module: hr_resignation
-#: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__message_main_attachment_id
-msgid "Main Attachment"
-msgstr "المرفق الرئيسي"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__message_has_error
@@ -272,13 +277,10 @@ msgid "Name of the employee for whom the request is creating"
 msgstr "اسم الموظف الذي يتم إنشاء الطلب له"
 
 #. module: hr_resignation
+#. odoo-python
 #: code:addons/hr_resignation/models/hr_resignation.py:0
-#: code:addons/hr_resignation/models/hr_resignation.py:0
-#: code:addons/hr_resignation/models/hr_resignation.py:0
-#: code:addons/hr_resignation/models/hr_resignation.py:0
-#, python-format
 msgid "New"
-msgstr "جديد"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields.selection,name:hr_resignation.selection__hr_resignation__resignation_type__resigned
@@ -289,6 +291,11 @@ msgstr "استقالة عادية"
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__notice_period
 msgid "Notice Period"
 msgstr "فترة إشعار"
+
+#. module: hr_resignation
+#: model:ir.model.fields,help:hr_resignation.field_hr_resignation__notice_period
+msgid "Notice Period of the employee."
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__message_needaction_counter
@@ -302,7 +309,7 @@ msgstr "عدد الاخطاء"
 
 #. module: hr_resignation
 #: model:ir.model.fields,help:hr_resignation.field_hr_resignation__message_needaction_counter
-msgid "Number of messages which requires an action"
+msgid "Number of messages requiring action"
 msgstr "عدد الرسائل التي تتطلب إجراء"
 
 #. module: hr_resignation
@@ -311,26 +318,26 @@ msgid "Number of messages with delivery error"
 msgstr "عدد الرسائل مع خطأ التسليم"
 
 #. module: hr_resignation
-#: model:ir.model.fields,help:hr_resignation.field_hr_resignation__message_unread_counter
-msgid "Number of unread messages"
-msgstr "عدد الرسائل غير المقروءة"
-
-#. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__name
 msgid "Order Reference"
 msgstr "ترتيب المرجعي"
 
 #. module: hr_resignation
+#. odoo-python
 #: code:addons/hr_resignation/models/hr_resignation.py:0
-#, python-format
-msgid "Please enter valid dates."
-msgstr "الرجاء إدخال تواريخ صحيحة."
+msgid "Please Enter Valid Dates."
+msgstr ""
 
 #. module: hr_resignation
+#. odoo-python
 #: code:addons/hr_resignation/models/hr_resignation.py:0
-#, python-format
-msgid "Please set joining date for employee"
-msgstr "يرجى تحديد تاريخ الانضمام للموظف"
+msgid "Please set a Joining Date for employee"
+msgstr ""
+
+#. module: hr_resignation
+#: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__rating_ids
+msgid "Ratings"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__reason
@@ -338,9 +345,9 @@ msgid "Reason"
 msgstr "السبب"
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Reject"
-msgstr "رفض"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields.selection,name:hr_resignation.selection__hr_resignation__state__cancel
@@ -353,19 +360,19 @@ msgid "Resign Date"
 msgstr "تاريخ الاستقالة"
 
 #. module: hr_resignation
-#: model:ir.ui.menu,name:hr_resignation.employee_resignation
+#: model:ir.ui.menu,name:hr_resignation.hr_resignation_menu_root
 msgid "Resignation"
-msgstr "استقالة"
+msgstr ""
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Resignation Details"
-msgstr "تفاصيل الاستقالة"
+msgstr ""
 
 #. module: hr_resignation
-#: model:ir.ui.menu,name:hr_resignation.employee_resignation_request
+#: model:ir.ui.menu,name:hr_resignation.hr_resignation_menu_request
 msgid "Resignation Request"
-msgstr "طلب الاستقالة"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__resignation_type
@@ -378,9 +385,9 @@ msgid "Resigned"
 msgstr "استقال"
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_employee_resigned_filter
+#: model_terms:ir.ui.view,arch_db:hr_resignation.view_employee_filter
 msgid "Resigned Employees"
-msgstr "الموظفين المستقيلين"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__message_has_sms_error
@@ -391,13 +398,12 @@ msgstr "خطأ في تسليم الرسائل القصيرة"
 #: model:ir.model.fields,help:hr_resignation.field_hr_resignation__resignation_type
 msgid ""
 "Select the type of resignation: normal resignation or fired by the company"
-msgstr ""
-"حدد نوع الاستقالة: استقالة عادية أو طرد من قبل الشركة"
+msgstr "حدد نوع الاستقالة: استقالة عادية أو طرد من قبل الشركة"
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Set to Draft"
-msgstr "تعيين إلى مسودة"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,help:hr_resignation.field_hr_resignation__reason
@@ -410,28 +416,23 @@ msgid "Status"
 msgstr "الحالة"
 
 #. module: hr_resignation
+#. odoo-python
 #: code:addons/hr_resignation/models/hr_resignation.py:0
+msgid "There are no Contracts found for this employee"
+msgstr ""
+
+#. module: hr_resignation
+#. odoo-python
 #: code:addons/hr_resignation/models/hr_resignation.py:0
-#, python-format
 msgid ""
 "There is a resignation request in confirmed or approved state for this "
 "employee"
-msgstr "هناك طلب استقالة في حالة مؤكدة أو معتمدة لهذا الموظف"
+msgstr ""
 
 #. module: hr_resignation
-#: model_terms:ir.ui.view,arch_db:hr_resignation.employee_resignation_form
+#: model_terms:ir.ui.view,arch_db:hr_resignation.hr_resignation_view_form
 msgid "Type"
-msgstr "يكتب"
-
-#. module: hr_resignation
-#: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__message_unread
-msgid "Unread Messages"
-msgstr "رسائل غير مقروءة"
-
-#. module: hr_resignation
-#: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__message_unread_counter
-msgid "Unread Messages Counter"
-msgstr "عداد الرسائل غير المقروءة"
+msgstr ""
 
 #. module: hr_resignation
 #: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__website_message_ids
@@ -444,17 +445,7 @@ msgid "Website communication history"
 msgstr "سجل اتصالات الموقع"
 
 #. module: hr_resignation
+#. odoo-python
 #: code:addons/hr_resignation/models/hr_resignation.py:0
-#, python-format
-msgid "You cannot create request for other employees"
-msgstr "لا يمكنك إنشاء طلب للموظفين الآخرين"
-
-#. module: hr_resignation
-#: model:ir.model.fields,field_description:hr_resignation.field_hr_resignation__read_only
-msgid "check field"
-msgstr "تحقق من الميدان"
-
-#. module: hr_resignation
-#: model:ir.model,name:hr_resignation.model_hr_resignation
-msgid "hr.resignation"
-msgstr "ساعة الاستقالة"
+msgid "You cannot create a request for other employees"
+msgstr ""

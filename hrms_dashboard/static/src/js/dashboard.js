@@ -1,5 +1,6 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
+import { session } from "@web/session";
 import { _t } from "@web/core/l10n/translation";
 import { onMounted, Component, useRef } from "@odoo/owl";
 import { onWillStart, useState } from "@odoo/owl";
@@ -62,6 +63,7 @@ export class HrDashboard extends Component{
         });
     }
     add_project_task() {
+            console.log("add_project_task:", user)
                 this.action.doAction({
                     name: _t("Project Task"),
                     type: 'ir.actions.act_window',
@@ -81,7 +83,7 @@ export class HrDashboard extends Component{
                     res_model: 'project.task',
                     view_mode: 'tree,form,kanban',
                     views: [[false, 'list'],[false, 'form'],[false, 'kanban']],
-                    domain: [['user_ids','in', user.userId]],
+                    domain: [['user_ids','in', session.uid]],
                     target: 'current'
                 });
             }
@@ -120,41 +122,13 @@ export class HrDashboard extends Component{
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    legend: {
-                        display: true,
-                        position: 'right',
-                        labels: {
-                            fontColor: '#374151',
-                            usePointStyle: true,
-                            fontFamily: "'Inter', sans-serif",
-                            fontSize: 11,
-                            padding: 12
-                        }
-                    },
-                    tooltips: {
-                        callbacks: {
-                            label: function (tooltipItem, data) {
-                                const dataset = data.datasets[tooltipItem.datasetIndex];
-                                const total = dataset.data.reduce((a, b) => a + b, 0);
-                                const currentValue = dataset.data[tooltipItem.index];
-                                const percentage = ((currentValue / total) * 100).toFixed(2);
-                                return data.labels[tooltipItem.index] + ": " + currentValue + " (" + percentage + "%)";
-                            }
-                        }
-                    },
                     plugins: {
                         legend: {
                             display: true,
                             position: 'right',
                             labels: {
-                                color: '#374151',
+                                color: 'black',
                                 usePointStyle: true,
-                                font: {
-                                    size: 11,
-                                    family: "'Inter', sans-serif"
-                                },
-                                padding: 12
                             }
                         },
                         tooltip: {
@@ -206,7 +180,6 @@ export class HrDashboard extends Component{
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
                     plugins: {
                         tooltip: {
                             callbacks: {
@@ -240,7 +213,6 @@ export class HrDashboard extends Component{
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
                     plugins: {
                         tooltip: {
                             callbacks: {
@@ -283,7 +255,7 @@ export class HrDashboard extends Component{
                     datasets: datasets
                 },
                 options: {
-                    responsive: true,
+                    responsive: false,
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
@@ -336,7 +308,7 @@ export class HrDashboard extends Component{
                     }]
                 },
                 options: {
-                    responsive: true,
+                    responsive: false,
                     maintainAspectRatio: false,
                     plugins: {
                         tooltip: {
@@ -395,7 +367,7 @@ export class HrDashboard extends Component{
                     }]
                 },
                 options: {
-                    responsive: true,
+                    responsive: false,
                     maintainAspectRatio: false,
                     plugins: {
                         tooltip: {
@@ -454,23 +426,6 @@ export class HrDashboard extends Component{
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    legend: {
-                        display: true,
-                        position: 'right',
-                        labels: {
-                            fontColor: '#374151',
-                            usePointStyle: true,
-                            fontFamily: "'Inter', sans-serif",
-                            fontSize: 11,
-                            padding: 12
-                        }
-                    },
-                    scale: {
-                        ticks: {
-                            display: false,
-                            beginAtZero: true
-                        }
-                    },
                     plugins: {
                         tooltip: {
                             callbacks: {
@@ -483,25 +438,19 @@ export class HrDashboard extends Component{
                             display: true,
                             position: 'right',
                             labels: {
-                                color: '#374151',
-                                usePointStyle: true,
-                                font: {
-                                    size: 11,
-                                    family: "'Inter', sans-serif"
-                                },
-                                padding: 12
+                                color: 'black'
                             }
                         }
                     },
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            ticks: {
-                                display: false
-                            }
+                   scales: {
+                    r: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
                         }
                     }
                 }
+            }
             });
         }
     }
@@ -619,21 +568,34 @@ export class HrDashboard extends Component{
             target: 'current'
         });
     }
-    async hr_contract() {
-        if(this.isHrManager){
+   async hr_contract() {
+        console.log("this:", this)
+        if (this.isHrManager) {
+
+            // Call the Python function to get the view ID
+            const view_id = await this.orm.call(
+                'hr.version',
+                'get_hr_version_list_view_id',
+                []
+            );
             this.action.doAction({
                 name: _t("Contracts"),
                 type: 'ir.actions.act_window',
-                res_model: 'hr.contract',
-                view_mode: 'tree,form,calendar',
-                views: [[false, 'list'],[false, 'form']],
+                res_model: 'hr.version',
+                view_mode: 'tree,form,graph,pivot',
+                views: [
+                    [view_id, 'list'],
+                    [false, 'graph'],
+                    [false, 'pivot'],
+                ],
                 context: {
                     'search_default_employee_id': this.state.login_employee.id,
                 },
                 target: 'current'
-            })
+            });
         }
-    }
+   }
+
     hr_timesheets() {
         this.action.doAction({
             name: _t("Timesheets"),

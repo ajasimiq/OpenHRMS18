@@ -14,7 +14,7 @@
                         domain="[('state', '=', 'transfer')]"/>
                 <filter name="done" string="Done"
                         domain="[('state', '=', 'done')]"/>
-                <group expand="0" string="Group By">
+                <group>
                     <filter name="employee" string="Employee"
                             context="{'group_by':'employee_id'}"/>
                     <filter name="status" string="Status"
@@ -48,6 +48,12 @@
                     <field name="state" widget="statusbar"
                            statusbar_visible="draft,transfer,done"/>
                 </header>
+                <div class="alert alert-warning p-3 text-center" role="alert"
+                     invisible="state != 'transfer'">
+                    <span>Warning: This employee will remain in the same company until the transferred branch accepts
+                        this transfer request.
+                    </span>
+                </div>
                 <sheet>
                     <div class="oe_title oe_left">
                         <h2>
@@ -90,22 +96,24 @@
         <field name="name">employee.transfer.view.list</field>
         <field name="model">employee.transfer</field>
         <field name="arch" type="xml">
-            <list string="Employee Transfer" decoration-info="state == 'draft'"
-                  decoration-muted="state in ('done','cancel')">
+            <list string="Employee Transfer">
                 <field name="name"/>
                 <field name="employee_id"/>
                 <field name="transfer_date"/>
+                <field name="company_id" groups="base.group_multi_company"/>
                 <field name="transfer_company_id"
                        groups="base.group_multi_company"/>
-                <field name="company_id" groups="base.group_multi_company"/>
-                <field name="state"/>
+                <field name="state" widget="badge" decoration-info="state=='draft'"
+                       decoration-warning="state=='transfer'"
+                       decoration-danger="state=='cancel'"
+                       decoration-success="state=='done'"/>
             </list>
         </field>
     </record>
 
     <!-- Employee Transfer Action -->
     <record id="employee_transfer_action" model="ir.actions.act_window">
-        <field name="name">Transfer</field>
+        <field name="name">Transfers</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">employee.transfer</field>
         <field name="view_mode">list,form</field>

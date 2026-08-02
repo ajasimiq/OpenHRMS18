@@ -3,8 +3,8 @@
 #   A part of Open HRMS Project <https://www.openhrms.com>
 #
 #    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
-#    Author: Raneesha M K (<https://www.cybrosys.com>)
+#    Copyright (C) 2026-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Author: Abhijith CK (<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
 #    GENERAL PUBLIC LICENSE (LGPL v3), Version 3.
@@ -19,7 +19,7 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from odoo import fields, models
+from odoo import fields, models, api
 
 
 class HrInsurance(models.Model):
@@ -49,14 +49,16 @@ class HrInsurance(models.Model):
                               ('expired', 'Expired'), ],
                              default='active', string="State",
                              compute='_compute_status',
+                                 store=True,
                              help="State for the insurance")
     company_id = fields.Many2one('res.company', string='Company',
                                  required=True, help="Company",
                                  default=lambda self: self.env.user.company_id)
 
+    @api.depends('date_from','date_to', 'policy_coverage', 'sum_insured', 'amount')
     def _compute_status(self):
         """This function is get and set state"""
-        current_date = fields.date.today()
+        current_date = fields.Date.today()
         for rec in self:
             if rec.policy_coverage == 'monthly':
                 rec.date_to = fields.Date.end_of(rec.date_from, 'month')

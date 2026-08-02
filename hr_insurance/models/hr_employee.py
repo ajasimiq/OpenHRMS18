@@ -3,8 +3,8 @@
 #   A part of Open HRMS Project <https://www.openhrms.com>
 #
 #    Cybrosys Technologies Pvt. Ltd.
-#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
-#    Author: Raneesha M K (<https://www.cybrosys.com>)
+#    Copyright (C) 2026-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Author: Abhijith CK (<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
 #    GENERAL PUBLIC LICENSE (LGPL v3), Version 3.
@@ -43,7 +43,7 @@ class HrEmployee(models.Model):
 
     def _compute_deducted_amount(self):
         """Used to get deduced amount"""
-        current_date = fields.date.today()
+        current_date = fields.Date.today()
         for emp in self:
             ins_amount = 0
             for ins in emp.insurance_ids:

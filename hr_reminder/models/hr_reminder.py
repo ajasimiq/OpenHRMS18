@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -24,7 +24,7 @@ from odoo import models, fields
 
 
 class HrReminder(models.Model):
-    """Creates the model Hr Reminder to create the reminders."""
+    """Model for Employees Reminder"""
     _name = 'hr.reminder'
     _description = "HR Reminder"
 
@@ -56,5 +56,5 @@ class HrReminder(models.Model):
     expiry_date = fields.Date(string="Reminder Expiry Date",
                               help="Expiry date to expires out the reminder")
     company_id = fields.Many2one('res.company', string='Company',
-                                 required=True, help="Company of the record",
+                                 required=True, help="he company to which this reminder belongs.",
                                  default=lambda self: self.env.user.company_id)

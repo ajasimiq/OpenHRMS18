@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -43,9 +43,13 @@ class HrSalaryRuleCategory(models.Model):
                                    help="Choose Hr Salary Rule Category")
     note = fields.Text(string='Description',
                        help="Description for Salary Category")
+
     company_id = fields.Many2one(
-        'res.company', string='Company', help="Choose Company",
-        default=lambda self: self.env.company)
+        'res.company',
+        string='Company',
+        required=True,
+        default=lambda self: self.env.company.id
+    )
 
     @api.constrains('parent_id')
     def _check_parent_id(self):

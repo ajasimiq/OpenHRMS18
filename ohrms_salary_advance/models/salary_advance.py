@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -80,8 +80,8 @@ class SalaryAdvance(models.Model):
                                 help='Credit account of the salary advance.')
     journal_id = fields.Many2one('account.journal', string='Journal',
                                  help='Journal of the salary advance.')
-    employee_contract_id = fields.Many2one('hr.contract', string='Contract',
-                                           related='employee_id.contract_id',
+    employee_contract_id = fields.Many2one('hr.version', string='Contract',
+                                           related='employee_id.version_id',
                                            help='Running contract of the '
                                                 'employee.')
 
@@ -111,13 +111,12 @@ class SalaryAdvance(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Supering the create method to generate sequence for the salary
-         advance."""
+        """Override create to generate sequence for salary advance."""
         for vals in vals_list:
-            vals['name'] = self.env['ir.sequence'].next_by_code(
-                'salary.advance.seq') or ' '
-        res_id = super(SalaryAdvance, self).create(vals_list)
-        return res_id
+            if not vals.get('name'):
+                vals['name'] = self.env['ir.sequence'].next_by_code('salary.advance.seq') or '/'
+        records = super(SalaryAdvance, self).create(vals_list)
+        return records
 
     def approve_request(self):
         """This Approves the employee salary advance request."""

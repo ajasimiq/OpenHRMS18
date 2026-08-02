@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 17.0\n"
+"Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-21 14:07+0000\n"
-"PO-Revision-Date: 2023-11-21 14:07+0000\n"
+"POT-Creation-Date: 2025-09-12 05:35+0000\n"
+"PO-Revision-Date: 2025-09-12 05:35+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -68,7 +68,6 @@ msgstr "موضوع الإعلان"
 #. module: hr_reward_warning
 #. odoo-python
 #: code:addons/hr_reward_warning/models/hr_employee.py:0
-#: code:addons/hr_reward_warning/models/hr_employee.py:0
 #: model:ir.actions.act_window,name:hr_reward_warning.hr_announcement_action
 #: model:ir.ui.menu,name:hr_reward_warning.hr_announcement_menu_root
 #: model:ir.ui.menu,name:hr_reward_warning.hr_announcement_menu_view_announcements
@@ -76,7 +75,6 @@ msgstr "موضوع الإعلان"
 #: model_terms:ir.ui.view,arch_db:hr_reward_warning.hr_announcement_view_search
 #: model_terms:ir.ui.view,arch_db:hr_reward_warning.hr_announcement_view_tree
 #: model_terms:ir.ui.view,arch_db:hr_reward_warning.view_employee_form
-#, python-format
 msgid "Announcements"
 msgstr "الإعلانات"
 
@@ -119,6 +117,14 @@ msgstr "من قبل وزارة"
 #: model:ir.model.fields.selection,name:hr_reward_warning.selection__hr_announcement__announcement_type__employee
 msgid "By Employee"
 msgstr "بواسطة الموظف"
+
+#. module: hr_reward_warning
+#: model:ir.model.fields,help:hr_reward_warning.field_hr_announcement__announcement_type
+msgid ""
+"By Employee: Announcement intended for specific Employees.\n"
+"By Department: Announcement intended for Employees in specific Departments.\n"
+"By Job Position: Announcement intended for Employees who are having specific Job Positions"
+msgstr ""
 
 #. module: hr_reward_warning
 #: model:ir.model.fields.selection,name:hr_reward_warning.selection__hr_announcement__announcement_type__job_position
@@ -172,6 +178,7 @@ msgstr "الإدارات"
 
 #. module: hr_reward_warning
 #: model:ir.model.fields,field_description:hr_reward_warning.field_hr_announcement__display_name
+#: model:ir.model.fields,field_description:hr_reward_warning.field_hr_employee__display_name
 msgid "Display Name"
 msgstr "اسم العرض"
 
@@ -257,8 +264,9 @@ msgstr ""
 
 #. module: hr_reward_warning
 #: model:ir.model.fields,field_description:hr_reward_warning.field_hr_announcement__id
+#: model:ir.model.fields,field_description:hr_reward_warning.field_hr_employee__id
 msgid "ID"
-msgstr ""
+msgstr "المُعرف"
 
 #. module: hr_reward_warning
 #: model:ir.model.fields,field_description:hr_reward_warning.field_hr_announcement__activity_exception_icon
@@ -343,15 +351,9 @@ msgid "Name"
 msgstr "اسم"
 
 #. module: hr_reward_warning
-#: model:ir.model.fields,field_description:hr_reward_warning.field_hr_announcement__activity_calendar_event_id
-msgid "Next Activity Calendar Event"
-msgstr "النشاط التالي حدث التقويم"
-
-#. module: hr_reward_warning
 #: model:ir.model.fields,field_description:hr_reward_warning.field_hr_announcement__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr "آخر نشاط الموعد النهائي"
-
 
 #. module: hr_reward_warning
 #: model:ir.model.fields,field_description:hr_reward_warning.field_hr_announcement__activity_summary
@@ -387,6 +389,11 @@ msgstr "عدد الرسائل مع خطأ التسليم"
 #: model:ir.model.fields,help:hr_reward_warning.field_hr_announcement__position_ids
 msgid "Position of the employee who is authorized to view this announcements."
 msgstr "موقف الموظف المخول بالاطلاع على ذلك."
+
+#. module: hr_reward_warning
+#: model:ir.model.fields,field_description:hr_reward_warning.field_hr_announcement__rating_ids
+msgid "Ratings"
+msgstr ""
 
 #. module: hr_reward_warning
 #: model_terms:ir.ui.view,arch_db:hr_reward_warning.hr_announcement_view_form
@@ -461,18 +468,12 @@ msgstr ""
 #. module: hr_reward_warning
 #. odoo-python
 #: code:addons/hr_reward_warning/models/hr_announcement.py:0
-#, python-format
 msgid "The Start Date must be earlier than the End Date"
 msgstr "يجب أن يكون تاريخ البدء أقدم من تاريخ الانتهاء"
 
 #. module: hr_reward_warning
 #: model:ir.model.fields,field_description:hr_reward_warning.field_hr_announcement__announcement_reason
 msgid "Title"
-msgstr ""
-
-#. module: hr_reward_warning
-#: model:ir.model.fields,help:hr_reward_warning.field_hr_announcement__announcement_type
-msgid "Type of the announcement."
 msgstr ""
 
 #. module: hr_reward_warning

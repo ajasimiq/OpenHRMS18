@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -27,12 +27,11 @@ from odoo.tools import email_split
 
 
 class HrLeave(models.Model):
-    """Inherited hr leave to inherit the message_new function"""
     _inherit = 'hr.leave'
 
     @api.model
     def message_new(self, msg_dict, custom_values=None):
-        """This function extracts required fields of hr. holidays from incoming
+        """This function extracts required fields of hr.holidays from incoming
          mail then creating records"""
         if custom_values is None:
             custom_values = {}
@@ -65,12 +64,18 @@ class HrLeave(models.Model):
                                           "%Y-%m-%d %H:%M:%S") -
                         datetime.strptime(str(start_date),
                                           '%Y-%m-%d %H:%M:%S')).days
+                leave_type = self.env['hr.leave.type'].search([
+                    ('requires_allocation', '=', 'no'),
+                    '|',
+                    ('company_id', 'in', self.env.user.company_ids.ids),
+                    '&',
+                    ('company_id', '=', False),
+                    ('country_id', 'in', self.env.companies.country_id.ids + [False])
+                ], limit=1)
                 custom_values.update({
                     'name': msg_subject.strip(),
                     'employee_id': employee.id,
-                    'holiday_status_id': self.env[
-                        'hr.leave.type'].search([('requires_allocation',
-                                                  '=', 'no')])[0].id,
+                    'holiday_status_id': leave_type.id,
                     'request_date_from': start_date,
                     'request_date_to': date_to,
                     'duration_display': no_of_days_temp + 1

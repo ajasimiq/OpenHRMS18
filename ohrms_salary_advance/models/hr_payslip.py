@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -33,7 +33,7 @@ class HrPayslip(models.Model):
            salary in the payslip."""
         res = super(HrPayslip, self).get_inputs(contract_ids, date_from,
                                                 date_to)
-        employee_id = self.env['hr.contract'].browse(
+        employee_id = self.env['hr.version'].browse(
             contract_ids[0].id).employee_id if contract_ids \
             else self.employee_id
         advance_salary = self.env['salary.advance'].search(

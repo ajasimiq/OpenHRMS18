@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -24,15 +24,9 @@ from odoo import models
 
 
 class HrPayslipEmployees(models.TransientModel):
-    """Extends the standard 'hr.payslip.employees' model to provide
-    functionality for calculating and generating payroll slips for selected
-    employees.
-    Methods:
-        - compute_sheet: Calculate and generate payroll slips for the selected
-        employees."""
     _inherit = 'hr.payslip.employees'
 
-    def compute_sheet(self):
+    def action_compute_sheet(self):
         """Calculate and generate payroll slips for the selected employees.
         This method calculates and generates payroll slips for the employees
         associated with the current wizard instance. It sets the journal_id
@@ -43,4 +37,4 @@ class HrPayslipEmployees(models.TransientModel):
             journal_id = self.env['hr.payslip.run'].browse(
                 self.env.context.get('active_id')).journal_id.id
         return super(HrPayslipEmployees,
-                     self.with_context(journal_id=journal_id)).compute_sheet()
+                     self.with_context(journal_id=journal_id)).action_compute_sheet()

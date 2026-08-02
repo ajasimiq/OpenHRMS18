@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -22,9 +22,9 @@
 #############################################################################
 {
     'name': "Open HRMS HR Dashboard",
-    'version': '19.0.1.2.0',
-    'summary': """Open HRMS - HR Dashboard""",
-    'description': """Open HRMS - HR Dashboard""",
+    'version': '19.0.1.0.0',
+    'summary': """Comprehensive Dashboard for Managing HR Activities in Open HRMS""",
+    'description': """Provides a dashboard to view key HR information such as attendance, leaves, payroll, and more. Helps HR teams track activities in one place.""",
     'category': 'Generic Modules/Human Resources',
     'live_test_url': 'https://youtu.be/XwGGvZbv6sc',
     'author': 'Cybrosys Techno solutions,Open HRMS',
@@ -34,7 +34,7 @@
     'depends': ['hr', 'hr_holidays', 'hr_timesheet', 'hr_payroll_community',
                 'hr_attendance', 'hr_timesheet_attendance',
                 'hr_recruitment', 'hr_resignation', 'event',
-                'hr_reward_warning','hr_expense'],
+                'hr_reward_warning', 'hr_expense'],
     'external_dependencies': {
         'python': ['pandas'],
     },

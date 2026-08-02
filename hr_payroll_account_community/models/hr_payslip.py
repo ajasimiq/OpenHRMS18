@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -48,13 +48,12 @@ class HrPayslip(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Create new payroll slips.This method is called when creating
-            new payroll slips.It checks if 'journal_id' is present in the
-            context and, if so, sets the 'journal_id' field in the values."""
-        if 'journal_id' in self.env.context:
+        journal_id = self.env.context.get('journal_id')
+        if journal_id:
             for vals in vals_list:
-                vals['journal_id'] = self.env.context.get('journal_id')
-        return super(HrPayslip, self).create(vals_list)
+                vals['journal_id'] = journal_id
+
+        return super().create(vals_list)
 
     @api.onchange('contract_id')
     def onchange_contract_id(self):
@@ -66,7 +65,8 @@ class HrPayslip(models.Model):
         super(HrPayslip, self).onchange_contract_id()
         self.journal_id = self.contract_id.journal_id.id or (
                 not self.contract_id and
-                self.default_get(['journal_id'])['journal_id'])
+                self.default_get(['journal_id']).get('journal_id')
+        )
 
     def action_payslip_cancel(self):
         """Cancel the payroll slip and associated accounting entries.This
@@ -148,7 +148,7 @@ class HrPayslip(models.Model):
                     'journal_id': slip.journal_id.id,
                     'date': slip.date or slip.date_to,
                     'debit': 0.0,
-                    'credit':  slip.company_id.currency_id.round(
+                    'credit': slip.company_id.currency_id.round(
                         debit_sum - credit_sum),
                 })
                 line_ids.append(adjust_credit)
@@ -166,7 +166,7 @@ class HrPayslip(models.Model):
                     'account_id': acc_id,
                     'journal_id': slip.journal_id.id,
                     'date': slip.date or slip.date_to,
-                    'debit':  slip.company_id.currency_id.round(
+                    'debit': slip.company_id.currency_id.round(
                         credit_sum - debit_sum),
                     'credit': 0.0,
                 })

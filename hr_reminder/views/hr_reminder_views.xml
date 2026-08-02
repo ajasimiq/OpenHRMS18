@@ -31,7 +31,8 @@
             </form>
         </field>
     </record>
-    <!--    List view of the model HR Reminder-->
+
+    <!--    Tree view of the model HR Reminder-->
     <record id="hr_reminder_view_tree" model="ir.ui.view">
         <field name="name">hr.reminder.tree.view</field>
         <field name="model">hr.reminder</field>
@@ -44,6 +45,7 @@
             </list>
         </field>
     </record>
+
     <!--Action of the model HR Reminder-->
     <record id="hr_reminder_action" model="ir.actions.act_window">
         <field name="name">Reminders</field>
@@ -55,6 +57,7 @@
             </p>
         </field>
     </record>
+
     <!--Menu item for the HR Reminder action-->
     <menuitem name="Reminders" id="hr_reminder_menu"
               web_icon="hr_reminder,static/description/icon.png"

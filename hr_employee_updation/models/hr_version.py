@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -20,25 +20,24 @@
 #    If not, see <http://www.gnu.org/licenses/>.
 #
 #############################################################################
-from odoo import fields, models
+from odoo import api, fields, models
 
 
-class HrContract(models.Model):
+class HrVersion(models.Model):
     """This class extends the 'hr.contract' model to add a custom 'notice_days'
      field. The 'notice_days' field is used to store the notice period for HR
      contracts."""
-    _inherit = 'hr.contract'
+    _inherit = 'hr.version'
 
-    def _default_notice_days(self):
-        """Get the default notice period from the  configuration.
-            :return: The default notice period in days.
-            :rtype: int """
-        return self.env['ir.config_parameter'].get_param(
-            'hr_employee_updation.no_of_days') if self.env[
-            'ir.config_parameter'].get_param(
-            'hr_employee_updation.notice_period') else 0
+    notice_days = fields.Integer(
+        string="Notice Period",
+        compute="_compute_notice_days",
+        store=False,  # keep False if you want it dynamic
+        help="Number of days required for notice before termination."
+    )
 
-    notice_days = fields.Integer(string="Notice Period",
-                                 default=_default_notice_days,
-                                 help="Number of days required for notice"
-                                      " before termination.")
+    @api.depends_context('uid')
+    def _compute_notice_days(self):
+        """Compute notice period from company's setting"""
+        for record in self:
+            record.notice_days = record.company_id.contract_expiration_notice_period or 0

@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -52,7 +52,7 @@ class HrLoanAcc(models.Model):
         """This creates account move for request."""
         loan_approve = self.env['ir.config_parameter'].sudo().get_param(
             'account.loan_approve')
-        contract_obj = self.env['hr.contract'].search(
+        contract_obj = self.env['hr.version'].search(
             [('employee_id', '=', self.employee_id.id)])
         if not contract_obj:
             raise UserError('You must Define a contract for employee')

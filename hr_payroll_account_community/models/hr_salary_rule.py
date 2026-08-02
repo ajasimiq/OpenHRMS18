@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -38,10 +38,8 @@ class HrSalaryRule(models.Model):
     account_debit_id = fields.Many2one('account.account',
                                        string='Debit Account',
                                        help="Debit account associated with the"
-                                            " record",
-                                       domain=[('deprecated', '=', False)])
+                                            " record")
     account_credit_id = fields.Many2one('account.account',
                                         string='Credit Account',
                                         help="Credit account associated with"
-                                             " the record",
-                                        domain=[('deprecated', '=', False)])
+                                             " the record")

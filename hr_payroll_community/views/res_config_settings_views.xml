@@ -71,8 +71,6 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
-        <field name="target">inline</field>
-        <field name="context">{'module' : 'hr_payroll_community'}</field>
     </record>
     <menuitem id="menu_hr_payroll_global_settings" name="Settings"
               parent="menu_hr_payroll_community_configuration"

@@ -4,7 +4,7 @@
 #
 #    Cybrosys Technologies Pvt. Ltd.
 #
-#    Copyright (C) 2024-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
+#    Copyright (C) 2025-TODAY Cybrosys Technologies(<https://www.cybrosys.com>)
 #    Author: Cybrosys Techno Solutions(<https://www.cybrosys.com>)
 #
 #    You can modify it under the terms of the GNU LESSER
@@ -113,22 +113,24 @@ class HrLoan(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """ Check whether any pending loan is for the employee and calculate
-            the sequence
-            :param vals_list : List of dictionaries which contain fields and
-            values"""
         for values in vals_list:
-            loan_count = self.env['hr.loan'].search_count(
-                [('employee_id', '=', values['employee_id']),
-                 ('state', '=', 'approve'),
-                 ('balance_amount', '!=', 0)])
+            # check for existing pending loans
+            loan_count = self.env['hr.loan'].search_count([
+                ('employee_id', '=', values.get('employee_id')),
+                ('state', '=', 'approve'),
+                ('balance_amount', '!=', 0)
+            ])
             if loan_count:
                 raise ValidationError(
-                    _("The Employee has already a pending installment"))
-            else:
+                    _("The Employee already has a pending installment")
+                )
+
+            # generate sequence
+            if values.get('name', 'New') in ('New', _('New')):
                 values['name'] = self.env['ir.sequence'].next_by_code(
-                    'hr.loan.seq') or ' '
-        return super().create(vals_list)
+                    'hr.loan.seq') or _('New')
+
+        return super(HrLoan, self).create(vals_list)
 
     def action_compute_installment(self):
         """This automatically create the installment the employee need to pay to
