@@ -62,7 +62,7 @@ class TestReminderRoutes(HttpCase):
             'name': 'Systray Employee',
             'login': 'systray.employee',
             'password': 'systray.employee.pw',
-            'groups_id': [(6, 0, [self.env.ref('base.group_user').id])],
+            'group_ids': [(6, 0, [self.env.ref('base.group_user').id])],
         })
         model = self.env['ir.model'].search([('model', '=', 'hr.employee')],
                                             limit=1)

@@ -22,7 +22,7 @@
 #############################################################################
 {
     'name': "Open HRMS Attendance Regularization",
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resource',
     'summary': """Assigning Attendance for the Employees with Onsight Jobs""",
     'description': """Assigning Attendance for the Employees with Onsight Jobs 

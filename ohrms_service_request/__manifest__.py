@@ -21,7 +21,7 @@
 ################################################################################
 {
     'name': "Open HRMS Service Request",
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': """For Requesting Services""",
     'description': """It allows employees to submit service requests related to 

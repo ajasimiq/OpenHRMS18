@@ -75,7 +75,7 @@
             </form>
         </field>
     </record>
-    <!--  Tree View of hr_announcement model -->
+    <!--  List View of hr_announcement model -->
     <record id="hr_announcement_view_tree" model="ir.ui.view">
         <field name="name">hr.announcement.view.tree</field>
         <field name="model">hr.announcement</field>

@@ -22,7 +22,7 @@
 #############################################################################
 {
     'name': 'Open HRMS Loan Accounting',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Open HRMS Loan Accounting',
     'description': """Create accounting entries for loan requests.""",

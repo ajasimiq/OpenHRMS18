@@ -22,7 +22,7 @@
 #############################################################################
 {
     'name': 'Open HRMS Branch Transfer',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Employee transfer between branches',
     'description': 'This modules allows the user to transfer an employee from '

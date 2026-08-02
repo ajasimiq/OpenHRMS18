@@ -31,7 +31,7 @@
             </form>
         </field>
     </record>
-    <!--    Tree view of the model HR Reminder-->
+    <!--    List view of the model HR Reminder-->
     <record id="hr_reminder_view_tree" model="ir.ui.view">
         <field name="name">hr.reminder.tree.view</field>
         <field name="model">hr.reminder</field>

@@ -21,7 +21,7 @@
 ###############################################################################
 {
     'name': 'Employee Documents',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': """Manages Employee Documents With Expiry Notifications.""",
     'description': 'Manages Employee Related Documents'

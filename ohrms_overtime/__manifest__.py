@@ -21,7 +21,7 @@
 #############################################################################
 {
     'name': 'Open HRMS Overtime',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Manage employee overtime efficiently by tracking and analyzing.',
     'description': """This module provides a solution for streamline and 

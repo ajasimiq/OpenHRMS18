@@ -22,7 +22,7 @@
 #############################################################################
 {
     'name': "Open HRMS Employee Shift",
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'summary': """Easily create, manage, and track employee shift schedules.""",
     'description': """It helps manage and track employee shifts and schedule 
         them according to their contracts and work requirements.""",

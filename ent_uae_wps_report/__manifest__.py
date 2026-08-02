@@ -22,7 +22,7 @@
 ################################################################################
 {
     'name': 'Enterprise WPS Report Generation for UAE',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Generic Modules/Human Resources',
     'summary': 'Open HRMS Wps Payroll System For UAE',
     'description': """The module helps to print the salary information file for 

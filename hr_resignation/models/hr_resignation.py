@@ -85,7 +85,7 @@ class HrResignation(models.Model):
     @api.depends('employee_id')
     def _compute_change_employee(self):
         """ Check whether the user has the permission to change the employee"""
-        res_user = self.env['res.users'].browse(self._uid)
+        res_user = self.env['res.users'].browse(self.env.uid)
         self.change_employee = res_user.has_group('hr.group_hr_user')
 
     @api.constrains('employee_id')

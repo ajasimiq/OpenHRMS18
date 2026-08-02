@@ -21,7 +21,7 @@
 ###############################################################################
 {
     'name': 'OpenHRMS Company Policy',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Manage Company Policies',
     'description': 'OpenHRMS Company Policies, hrms, policies',

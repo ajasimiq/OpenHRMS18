@@ -22,7 +22,7 @@
 #############################################################################
 {
     'name': 'Open HRMS Leave Request Aliasing',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': """Automated Leave Request generation from Incoming Emails.""",
     'description': """This module simplifies leave request creation by 

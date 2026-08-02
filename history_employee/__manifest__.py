@@ -22,7 +22,7 @@
 #############################################################################
 {
     'name': 'Open HRMS Employee History',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': """Various Histories related to an employee. """,
     'description': """This module tracks the Job/Department History, Salary History, 

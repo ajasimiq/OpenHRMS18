@@ -22,7 +22,7 @@
 #############################################################################
 {
     'name': 'Open HRMS Advance Salary',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Advance Salary In Open HRMS.',
     'description': """THis module is a component of Open HRMS suit. It module 

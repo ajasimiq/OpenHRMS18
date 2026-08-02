@@ -7,8 +7,8 @@ regression in CI -- before an upgrade -- rather than in an Odoo log at
 2am, so this module deliberately has **no Odoo and no third-party
 dependency**: it runs on a bare CPython 3.8+ interpreter.
 
-    python tools/odoo18_compat_check.py            # whole repo
-    python tools/odoo18_compat_check.py hr_resignation hr_reminder
+    python tools/odoo_compat_check.py            # whole repo
+    python tools/odoo_compat_check.py hr_resignation hr_reminder
 
 Exit code is 0 when clean, 1 when any finding is reported.
 """
@@ -23,9 +23,22 @@ import sys
 import xml.etree.ElementTree as ET
 from collections import defaultdict
 
-# Dispatcher types accepted by odoo.http in 18.0. 'jsonrpc' is the Odoo 19
-# spelling and makes the whole registry fail to load on 18.
-VALID_ROUTE_TYPES = {"http", "json"}
+# Dispatcher types accepted by odoo.http, per series. The rename is the
+# single nastiest 18<->19 difference: the wrong spelling does not warn, it
+# makes the module fail to import and takes the whole registry down with it.
+ROUTE_TYPES_BY_VERSION = {
+    "18": {"http", "json"},
+    "19": {"http", "jsonrpc", "json2"},
+}
+
+# Fields renamed on core models in 19.0. Using the old name in a data file
+# raises "Invalid field" at load time.
+RENAMED_FIELDS_19 = {
+    "groups_id": "res.users.groups_id was renamed to group_ids in Odoo 19",
+}
+
+# Target series; overridden by --odoo-version.
+TARGET_VERSION = "19"
 
 # Field kwargs that 18.0 does not understand. Each one is silently ignored
 # after logging "unknown parameter", so the intended behaviour never happens.
@@ -144,12 +157,13 @@ def check_python(root, path, module, findings):
             keyword = _kwarg(node, "type")
             if keyword is not None:
                 value = _const_str(keyword.value)
-                if value is not None and value not in VALID_ROUTE_TYPES:
+                valid = ROUTE_TYPES_BY_VERSION[TARGET_VERSION]
+                if value is not None and value not in valid:
                     findings.append(Finding(
                         relpath, node.lineno, "ROUTE-TYPE",
-                        f"@http.route(type={value!r}) is not a valid Odoo 18 "
-                        f"dispatcher; the module will fail to load. "
-                        f"Valid: {sorted(VALID_ROUTE_TYPES)}"))
+                        f"@http.route(type={value!r}) is not a valid Odoo "
+                        f"{TARGET_VERSION}.0 dispatcher; the module will fail "
+                        f"to load. Valid: {sorted(valid)}"))
 
         # -- field kwargs ----------------------------------------------
         if _is_fields_call(node):
@@ -259,6 +273,23 @@ def check_xml(root, path, findings):
                                 f"file does not parse: {exc}"))
         return [], []
 
+    if TARGET_VERSION == "19":
+        for element in tree.iter():
+            if element.get("t-name") == "kanban-box":
+                findings.append(Finding(
+                    relpath, 0, "KANBAN-BOX",
+                    "<t t-name='kanban-box'> was removed in Odoo 19 -- the "
+                    "card body template is now named 'card'"))
+        for record in tree.iter("record"):
+            if record.get("model") != "res.users":
+                continue
+            for field in record.iter("field"):
+                reason = RENAMED_FIELDS_19.get(field.get("name"))
+                if reason:
+                    findings.append(Finding(
+                        relpath, 0, "RENAMED-FIELD",
+                        f"<field name={field.get('name')!r}> -- {reason}"))
+
     record_ids = []
     server_calls = []
     for record in tree.iter("record"):
@@ -327,12 +358,24 @@ def run(root, modules):
 
 
 def main(argv):
+    global TARGET_VERSION
+    args = list(argv[1:])
+    for i, arg in enumerate(list(args)):
+        if arg.startswith("--odoo-version="):
+            TARGET_VERSION = arg.split("=", 1)[1].split(".")[0]
+            args.remove(arg)
+    if TARGET_VERSION not in ROUTE_TYPES_BY_VERSION:
+        print("unsupported --odoo-version %r; expected one of %s"
+              % (TARGET_VERSION, sorted(ROUTE_TYPES_BY_VERSION)))
+        return 2
+
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    modules = argv[1:] or discover_modules(root)
+    modules = args or discover_modules(root)
+    print("odoo_compat_check: targeting Odoo %s.0" % TARGET_VERSION)
     findings = run(root, modules)
 
     if not findings:
-        print(f"odoo18_compat_check: OK -- {len(modules)} modules, no findings")
+        print(f"odoo_compat_check: OK -- {len(modules)} modules, no findings")
         return 0
 
     findings.sort(key=Finding.sort_key)
@@ -341,7 +384,7 @@ def main(argv):
         counts[finding.code] += 1
         print(finding)
     print("")
-    print(f"odoo18_compat_check: {len(findings)} finding(s) across "
+    print(f"odoo_compat_check: {len(findings)} finding(s) across "
           f"{len(modules)} module(s)")
     for code in sorted(counts):
         print(f"  {code:<16} {counts[code]}")

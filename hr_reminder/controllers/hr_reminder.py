@@ -28,7 +28,7 @@ from odoo.http import request
 class Reminders(http.Controller):
     """Creates the controller to create the controllers for the working of the
     reminders"""
-    @http.route('/hr_reminder/all_reminder', type='json', auth="user")
+    @http.route('/hr_reminder/all_reminder', type='jsonrpc', auth="user")
     def all_reminder(self):
         """Method all_reminder returns the records of the all reminders in the
         model HR Reminder.
@@ -65,7 +65,7 @@ class Reminders(http.Controller):
                     })
         return reminders
 
-    @http.route('/hr_reminder/reminder_active', type='json', auth="user")
+    @http.route('/hr_reminder/reminder_active', type='jsonrpc', auth="user")
     def reminder_active(self, **kwargs):
         """Method reminder_active returns the current reminder when clicked in
         view button in the systray."""

@@ -22,7 +22,7 @@
 ################################################################################
 {
     'name': 'Open HRMS Leave Multi-Level Approval',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': """Efficient multi-level leave approval system for seamless 
      request processing.""",

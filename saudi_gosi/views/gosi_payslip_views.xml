@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!--
-   Defines the tree view for the GOSI payslip model.
+   Defines the list view for the GOSI payslip model.
    Displays fields such as employee details, department, position, nationality, GOSI number, and issue date.
    -->
     <record id="gosi_payslip_view_tree" model="ir.ui.view">

@@ -25,7 +25,7 @@
                    eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
         </record>
         <record id="base.default_user" model="res.users">
-            <field name="groups_id"
+            <field name="group_ids"
                    eval="[(4,ref('hr_payroll_community.group_hr_payroll_community_manager'))]"/>
         </record>
         <record id="hr_payroll_rule_officer" model="ir.rule">

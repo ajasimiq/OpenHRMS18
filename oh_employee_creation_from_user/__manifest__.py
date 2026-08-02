@@ -22,7 +22,7 @@
 #############################################################################
 {
     'name': 'Open HRMS Employees From User',
-    'version': '18.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Human Resources',
     'summary': 'Automatically creates employee while creating user',
     'description': "This module facilitates the automatic creation of "

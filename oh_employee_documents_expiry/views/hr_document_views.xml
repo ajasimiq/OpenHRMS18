@@ -21,7 +21,7 @@
             </form>
         </field>
     </record>
-    <!--    Tree view of hr_document model.-->
+    <!--    List view of hr_document model.-->
     <record id='hr_document_view_tree' model='ir.ui.view'>
         <field name="name">hr.document.view.tree</field>
         <field name="model">hr.document</field>
