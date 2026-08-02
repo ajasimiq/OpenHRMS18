@@ -198,7 +198,14 @@ class TestHrResignation(TransactionCase):
             'name': 'Leaver User',
             'login': 'leaver.user@example.com',
         })
-        employee = self._make_employee('Leaver User', user_id=user.id)
+        # oh_employee_creation_from_user, when installed, already creates an
+        # employee for every new user. Creating a second one for the same user
+        # violates the hr_employee_user_uniq constraint, so reuse whatever the
+        # database gave us and only create when nothing exists.
+        employee = self.env['hr.employee'].search(
+            [('user_id', '=', user.id)], limit=1)
+        if not employee:
+            employee = self._make_employee('Leaver User', user_id=user.id)
         self._make_contract(employee)
         resignation = self._make_resignation(employee, self.today)
         self._approve(resignation)

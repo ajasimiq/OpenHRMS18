@@ -28,12 +28,17 @@ from odoo.http import request
 class Reminders(http.Controller):
     """Creates the controller to create the controllers for the working of the
     reminders"""
-    @http.route('/hr_reminder/all_reminder', type='json', auth="public")
+    @http.route('/hr_reminder/all_reminder', type='json', auth="user")
     def all_reminder(self):
         """Method all_reminder returns the records of the all reminders in the
-        model HR Reminder."""
+        model HR Reminder.
+
+        Read with sudo: the systray widget ships in web.assets_backend and so
+        runs for every internal user, but ir.model.access grants base.group_user
+        no read on hr.reminder. Without sudo, any employee who is not an HR
+        officer gets an AccessError when opening the systray."""
         reminders = []
-        for reminder in request.env['hr.reminder'].search([]):
+        for reminder in request.env['hr.reminder'].sudo().search([]):
             if reminder.search_by == 'today':
                 reminders.append({
                     'id': reminder.id,
@@ -60,7 +65,7 @@ class Reminders(http.Controller):
                     })
         return reminders
 
-    @http.route('/hr_reminder/reminder_active', type='json', auth="public")
+    @http.route('/hr_reminder/reminder_active', type='json', auth="user")
     def reminder_active(self, **kwargs):
         """Method reminder_active returns the current reminder when clicked in
         view button in the systray."""

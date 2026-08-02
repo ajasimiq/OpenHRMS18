@@ -53,6 +53,17 @@ class TestReminderRoutes(HttpCase):
     def setUp(self):
         super().setUp()
         self.today = fields.Date.today()
+        # A plain internal user -- base.group_user only, deliberately NOT an
+        # HR officer. ir.model.access.csv grants that group read=0 on
+        # hr.reminder, yet the systray widget ships in web.assets_backend and
+        # therefore loads for exactly this user. Before the fix, every one of
+        # them got an AccessError on opening the systray.
+        self.employee_user = self.env['res.users'].create({
+            'name': 'Systray Employee',
+            'login': 'systray.employee',
+            'password': 'systray.employee.pw',
+            'groups_id': [(6, 0, [self.env.ref('base.group_user').id])],
+        })
         model = self.env['ir.model'].search([('model', '=', 'hr.employee')],
                                             limit=1)
         field = self.env['ir.model.fields'].search([
@@ -66,6 +77,7 @@ class TestReminderRoutes(HttpCase):
             'search_by': 'today',
             'company_id': self.env.company.id,
         })
+        self.authenticate('systray.employee', 'systray.employee.pw')
 
     def _call(self, route, params=None):
         response = self.url_open(
