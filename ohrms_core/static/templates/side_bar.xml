@@ -39,7 +39,6 @@
                         <div class="app-menu">
                             <t t-foreach="menuService.getApps()" t-as="app"
                                t-key="app_index">
-                                <t t-log="app.id"/>
                                 <a role="menuitem"
                                    t-attf-href="/odoo/action-{{app.actionID}}#menu_id={{app.id}}"
                                    class="dropdown-item o_app mt0"
